@@ -9,19 +9,20 @@ Office.onReady((info) => {
   if (info.host === Office.HostType.Word) {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
-    document.getElementById("run1").onclick = run1;
-    document.getElementById("run2").onclick = run2;
+    document.getElementById("run1").onclick = addTextToSelection;
+    document.getElementById("run2").onclick = correctSelection;
   }
 });
 
-export async function run1() {
+export async function addTextToSelection() {
   return Word.run(async (context) => {
     /**
      * Insert your Word code here
      */
 
     var rangeSelected;
-    var strSelected;
+    var selectedText;
+    var addedText;
 
     // Get Selected Range
     rangeSelected = context.document.getSelection();
@@ -33,44 +34,43 @@ export async function run1() {
     await context.sync();
 
     // extract string to variable for further processing
-    strSelected = rangeSelected.text;
+    selectedText = rangeSelected.text;
 
-    // Insert string at the end of the paragraph
-    const paragraph = context.document.body.insertParagraph(strSelected, Word.InsertLocation.end);
+    // TODO: Add Text via GPT API
+    addedText = " TEST ";
 
-    // change the paragraph color to blue.
-    paragraph.font.color = "blue";
+    // Insert string at the end of the selected area
+    rangeSelected.insertText(addedText, Word.InsertLocation.end);
+    rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
+
+    // Insert added text with foot note
 
     await context.sync();
   });
 }
 
-export async function run2() {
+export async function correctSelection() {
   return Word.run(async (context) => {
     /**
      * Insert your Word code here
      */
 
     var rangeSelected;
-    var strSelected;
+    var correctedText;
 
     // Get Selected Range
     rangeSelected = context.document.getSelection();
-
-    // Load selected string
-    rangeSelected.load("text");
+    rangeSelected.clear();
 
     // Wait until everything is synced
     await context.sync();
 
-    // extract string to variable for further processing
-    strSelected = rangeSelected.text;
+    // Correct Text via GPT API - TODO
+    correctedText = "abcdefg 12345 doijdas dasadssd asdafsds";
 
-    // Insert string at the end of the paragraph
-    const paragraph = context.document.body.insertParagraph(strSelected, Word.InsertLocation.start);
-
-    // change the paragraph color to blue.
-    paragraph.font.color = "blue";
+    // Insert corrected text with foot note
+    rangeSelected.insertText(correctedText, Word.InsertLocation.start);
+    rangeSelected.insertFootnote("This text was corrected by the GPT AI");
 
     await context.sync();
   });
