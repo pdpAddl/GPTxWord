@@ -5,12 +5,21 @@
 
 /* global document, Office, Word */
 
+//require("./keyhandling.js");
+//require("./gpt.js");
+
+var keyExists;
+const KEYITEM_NAME = "GPTAPI_Key";
+
 Office.onReady((info) => {
   if (info.host === Office.HostType.Word) {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
+
     //document.getElementById("BtnAddText").onclick = addTextToSelection;
-    document.getElementById("BtnCorrectText").onclick = correctSelection;
+    document.getElementById("BtnCorrectText").onclick = validateGPTKey; //correctSelection;
+    document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    document.getElementById("BtnHelp").onclick = removeGPTKey;
   }
 });
 
@@ -76,3 +85,69 @@ export async function correctSelection() {
   });
 }
 
+export async function addGPTKey() {
+  return Word.run(async (context) => {
+    context.document.properties.customProperties.load("items");
+    await context.sync();
+
+    context.document.properties.customProperties.add(KEYITEM_NAME, "test");
+    await context.sync();
+    console.log(context.document.properties.customProperties.items);
+  });
+}
+
+export async function validateGPTKey() {
+  return Word.run(async (context) => {
+    checkGPTKeyExists().then(async function () {
+      if (keyExists) {
+        const properties = context.document.properties.customProperties;
+
+        var gpt_key = properties.getItem(KEYITEM_NAME);
+
+        gpt_key.load("value");
+        await context.sync();
+
+        if (gpt_key.value == "test") console.log("Success");
+        else console.log("No success");
+      } else {
+        console.log("No key available");
+      }
+    });
+  });
+}
+
+export async function removeGPTKey() {
+  return Word.run(async (context) => {
+    checkGPTKeyExists().then(async function () {
+      if (keyExists) {
+        const properties = context.document.properties.customProperties;
+
+        context.document.properties.customProperties.load("items");
+        await context.sync();
+
+        properties.getItem(KEYITEM_NAME).delete();
+        //gpt_key.delete();
+
+        await context.sync();
+        console.log(context.document.properties.customProperties.items);
+      } else {
+        console.log("No key to remove");
+      }
+    });
+  });
+}
+
+export async function checkGPTKeyExists() {
+  return Word.run(async (context) => {
+    const properties = context.document.properties.customProperties;
+
+    context.document.properties.customProperties.load("items");
+    properties.load("key");
+
+    await context.sync();
+
+    keyExists = false;
+    for (let i = 0; i < properties.items.length; i++) if (properties.items[i].key == KEYITEM_NAME) keyExists = true;
+    console.log(keyExists);
+  });
+}
