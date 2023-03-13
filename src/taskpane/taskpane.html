@@ -8,7 +8,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GPT Add-in for word</title>
+    <title>GPTxWord</title>
 
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
@@ -32,13 +32,13 @@
         <h2 class="ms-font-xl">Please sideload your add-in to see app body.</h2>
     </section>
     <main id="app-body" class="ms-welcome__main" style="display: none;">
-        <label for="ApiKey">Enter API Key:</label>
-        <input type="text" id="ApiKey" name="ApiKey">
-        <button class="btn" id="BtnApiKeyConfirm">Confirm</button>
+        <button class="btn" id="BtnCorrectText" type="button">Correct highlighted text</button>
         <br>
-        <button class="btn" id="BtnCorrectText">Correct highlighted text</button>
+        <button class="btn" id="BtnAddText" type="button">Add text</button>
         <br>
-        <button class="btn" id="BtnHelp"><i class="btn-help"></i> Help</button>
+        <a href="config.html">
+            <img alt="Config" src="../../assets/settings-svgrepo-com.svg" width="40" height="40">
+        </a>
         <!-- <ul class="ms-List ms-welcome__features">
             <li class="ms-ListItem">
                 <i class="ms-Icon ms-Icon--Ribbon ms-font-xl"></i>
