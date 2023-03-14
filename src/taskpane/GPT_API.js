@@ -1,5 +1,25 @@
 const { Configuration, OpenAIApi } = require("openai");
 var key = process.env.OPENAI_API_KEY;
+
+set_key(key);
+
+async function set_key(newKey){
+  const NewConfiguration = new Configuration({
+    apiKey: newKey,
+  });
+
+  const NewOpenAIApi = new OpenAIApi(NewConfiguration);
+
+  if (await key_validation(NewOpenAIApi)){
+    console.log("Key correct");
+    return NewOpenAIApi
+  }else{
+    console.log("Key incorrect");
+    return false;                     //return OldOpenAIApi ???
+  }
+}
+
+
 const configuration = new Configuration({
   apiKey: key,
 });
@@ -15,13 +35,15 @@ async function text_completion ( API, text){
     ],
   });
 
-  console.log("Anfrage: Complete this Text and keep the original Language: "+ text)
-  console.log("Antwort: "+response.data.choices[0].message.content);
-  console.log("Anfrage ID: "+response.data.id); 
-  console.log("Tokens für Anfrage: "+response.data.usage.prompt_tokens);
-  console.log("Tokens für Antwort: "+response.data.usage.completion_tokens);
-  console.log("Insgesamt verwendete Token: "+response.data.usage.total_tokens);
-  return  response;
+  // console.log("Anfrage: Complete this Text and keep the original Language: "+ text)
+  // console.log("Antwort: "+response.data.choices[0].message.content);
+  // console.log("Anfrage ID: "+response.data.id); 
+  // console.log("Tokens für Anfrage: "+response.data.usage.prompt_tokens);
+  // console.log("Tokens für Antwort: "+response.data.usage.completion_tokens);
+  // console.log("Insgesamt verwendete Token: "+response.data.usage.total_tokens);
+
+  return  response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
+
 }
 
 
@@ -42,7 +64,8 @@ async function text_correction(API, text) {
   console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
   console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
   console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
-  return response;
+
+  return response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 async function text_correction(API, text) {
@@ -61,7 +84,8 @@ async function text_correction(API, text) {
   console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
   console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
   console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
-  return response;
+
+  return response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 async function text_translation(API, text, Language) {
@@ -80,7 +104,8 @@ async function text_translation(API, text, Language) {
   //console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
   //console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
   //console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");
-  return response;
+
+  return response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 async function key_validation(API) {
@@ -111,6 +136,8 @@ async function image_generation(API, description) {
   image_url = await response.data.data[0].url;
   console.log(image_url)
 }
+
+//set_key(key);
 
 TEXT = "ich wollte nur";
 TEXT1 = "bonjour tu vas bien ou tu as des problèmes?";
