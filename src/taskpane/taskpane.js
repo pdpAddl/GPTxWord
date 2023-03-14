@@ -6,7 +6,7 @@
 /* global document, Office, Word */
 
 //require("./keyhandling.js");
-//require("./gpt.js");
+require("./GPT_API.js");
 
 var keyExists;
 const KEYITEM_NAME = "GPTAPI_Key";
@@ -16,10 +16,10 @@ Office.onReady((info) => {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
 
-    //document.getElementById("BtnAddText").onclick = addTextToSelection;
+    document.getElementById("BtnAddText").onclick = addTextToSelection;
     document.getElementById("BtnCorrectText").onclick = validateGPTKey; //correctSelection;
-    document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnHelp").onclick = removeGPTKey;
+    //document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    //document.getElementById("BtnHelp").onclick = removeGPTKey;
   }
 });
 
