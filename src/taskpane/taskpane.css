@@ -16,6 +16,35 @@
      padding: 0;
  }
  
+ .btn-help {
+    content: url("../../assets/help-svgrepo-com.svg");
+    
+ }
+
+ .btn-config {
+    border: none;
+    background-color: transparent;
+ }
+
+ .btn {
+    /* background-color: aliceblue; */
+    /*border: none;*/
+    /* padding: 12px 16px; */
+    cursor: pointer;
+ }
+ .btn:hover {
+    background-color: rgb(28, 193, 86);
+ }
+
+ .ApiKeyConfirmed {
+    visibility: hidden;
+ }
+
+ .ApiKeyUnconfirmed {
+    visibility: visible;
+ }
+
+
  .ms-welcome__header {
     padding: 20px;
     padding-bottom: 30px;
