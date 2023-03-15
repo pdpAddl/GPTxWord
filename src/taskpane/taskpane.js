@@ -3,7 +3,7 @@
  * See LICENSE in the project root for license information.
  */
 
-import { key_validation } from "./GPT_API.js";
+import { key_validation, set_key } from "./GPT_API.js";
 
 /* global document, Office, Word */
 
@@ -21,9 +21,9 @@ Office.onReady((info) => {
     document.getElementById("BtnAddText").onclick = validateGPTKey;
     document.getElementById("BtnCorrectText").onclick = addGPTKey; //correctSelection;
 
-    document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
-    document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
+    //document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    //document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
+    //document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     //document.getElementById("BtnHelp").onclick = removeGPTKey;
   }
 });
@@ -92,10 +92,23 @@ export async function correctSelection() {
 
 export async function addGPTKey() {
   return Word.run(async (context) => {
+    var valid, newKey;
     context.document.properties.customProperties.load("items");
     await context.sync();
 
-    context.document.properties.customProperties.add(KEYITEM_NAME, "test");
+    newKey = "test";
+
+    valid = await set_key(newKey);
+    if (valid) {
+      // Key is correct and was applied
+      context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
+
+      console.log("Key applied");
+    } else {
+      // Error message, wrong key
+      console.log("Key denied");
+    }
+
     await context.sync();
     console.log(context.document.properties.customProperties.items);
   });
@@ -113,10 +126,10 @@ export async function validateGPTKey() {
         await context.sync();
 
         var chosen_key = gpt_key.value;
-        chosen_key = "test";
+        //chosen_key = "test";
 
         console.log("read key: " + chosen_key);
-        if (await key_validation(chosen_key)) {
+        if (await set_key(chosen_key)) {
           console.log("Key is valid");
         } else {
           console.log("Key is not valid");

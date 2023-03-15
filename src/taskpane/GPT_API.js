@@ -9,32 +9,28 @@ var currentOPENAIApi = new OpenAIApi(configuration);
 
 //set_key(key);
 
-async function set_key(newKey){
-  OldOpenAIApi = currentOPENAIApi;
-  const NewConfiguration = new Configuration({
+export async function set_key(newKey) {
+  var OldOpenAIApi = currentOPENAIApi;
+  var NewConfiguration = new Configuration({
     apiKey: newKey,
   });
 
   const NewOpenAIApi = new OpenAIApi(NewConfiguration);
 
-  if (await key_validation(NewOpenAIApi)){
+  if (await key_validation(NewOpenAIApi)) {
     console.log("Key correct");
     currentOPENAIApi = NewOpenAIApi;
     return true;
-  }else{
+  } else {
     console.log("Key incorrect");
     currentOPENAIApi = OldOpenAIApi;
-    return false;                   
+    return false;
   }
 }
 
-
-
-
 // const openai = new OpenAIApi(configuration);
 
-
-async function text_completion (text){
+export async function text_completion(text) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
@@ -44,19 +40,16 @@ async function text_completion (text){
   });
 
   // console.log("Anfrage: Complete this Text and keep the original Language: "+ text)
-   console.log("Antwort: "+response.data.choices[0].message.content);
-  // console.log("Anfrage ID: "+response.data.id); 
+  console.log("Antwort: " + response.data.choices[0].message.content);
+  // console.log("Anfrage ID: "+response.data.id);
   // console.log("Tokens für Anfrage: "+response.data.usage.prompt_tokens);
   // console.log("Tokens für Antwort: "+response.data.usage.completion_tokens);
   // console.log("Insgesamt verwendete Token: "+response.data.usage.total_tokens);
 
-  return  response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
-
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-
-
-async function text_correction(text) {
+export async function text_correction(text) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
@@ -65,23 +58,23 @@ async function text_correction(text) {
     ],
   });
 
-/*  console.log("Anfrage: Correct Spelling and Grammar of the following Text and keep the original Language: " + text);*/
+  /*  console.log("Anfrage: Correct Spelling and Grammar of the following Text and keep the original Language: " + text);*/
   console.log("Antwort: " + response.data.choices[0].message.content);
- /* console.log("Anfrage ID: " + response.data.id);
+  /* console.log("Anfrage ID: " + response.data.id);
   console.log("Tokens für Anfrage: " + response.data.usage.prompt_tokens);
   console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
   console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
   console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
 
-  return response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-async function text_translation(text, Language) {
+export async function text_translation(text, Language) {
   const response = await currentOPENAIApi.createChatCompletion({
-    model: "gpt-3.5-turbo", 
+    model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: "You are a helpful assistant that translates to" + Language},
-      { role: "user", content: "Translate the following text to" + Language + ": " + text},
+      { role: "system", content: "You are a helpful assistant that translates to" + Language },
+      { role: "user", content: "Translate the following text to" + Language + ": " + text },
     ],
   });
 
@@ -93,10 +86,10 @@ async function text_translation(text, Language) {
   //console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
   //console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");
 
-  return response;          //für den Text des Ergebnisses: response.data.choices[0].message.content
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-export async function key_validation(API) {
+async function key_validation(API) {
   try {
     const response = await API.createCompletion({
       model: "ada",
@@ -113,22 +106,17 @@ export async function key_validation(API) {
   }
 }
 
-
-
-async function image_generation(description) {
+export async function image_generation(description) {
   const response = await currentOPENAIApi.createImage({
-    prompt : description,
-    n : 1,
-    size : "1024x1024"
-  })
+    prompt: description,
+    n: 1,
+    size: "1024x1024",
+  });
   image_url = await response.data.data[0].url;
-  console.log(image_url)
+  console.log(image_url);
 }
 
 //set_key(key);
-
-var TEXT = "ich wollte nur";
-var TEXT1 = "bonjour tu vas bien ou tu as des problèmes?";
 
 //text_completion(TEXT);
 //text_correction(TEXT);
