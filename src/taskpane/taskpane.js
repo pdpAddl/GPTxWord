@@ -25,8 +25,16 @@ Office.onReady((info) => {
     //document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
     //document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     //document.getElementById("BtnHelp").onclick = removeGPTKey;
+    document.getElementById("BtnConfig").onclick = toggleConfigPageVisibility;
+    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick = addTextToSelection;
   }
 });
+
+function toggleConfigPageVisibility() {
+  var element = document.getElementById("configPage");
+  var style = window.getComputedStyle( element, null );
+  style.visibility === "visible" ? element.style.visibility = "hidden" : element.style.visibility = "visible";
+}
 
 export async function addTextToSelection() {
   return Word.run(async (context) => {
@@ -51,7 +59,7 @@ export async function addTextToSelection() {
     selectedText = rangeSelected.text;
 
     // TODO: Add Text via GPT API
-    addedText = " TEST ";
+    addedText = " Test ";
 
     // Insert string at the end of the selected area
     rangeSelected.insertText(addedText, Word.InsertLocation.end);
