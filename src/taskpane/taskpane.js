@@ -3,6 +3,8 @@
  * See LICENSE in the project root for license information.
  */
 
+import { key_validation } from "./GPT_API.js";
+
 /* global document, Office, Word */
 
 //require("./keyhandling.js");
@@ -16,9 +18,12 @@ Office.onReady((info) => {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
 
-    document.getElementById("BtnAddText").onclick = addTextToSelection;
-    document.getElementById("BtnCorrectText").onclick = validateGPTKey; //correctSelection;
-    //document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    document.getElementById("BtnAddText").onclick = validateGPTKey;
+    document.getElementById("BtnCorrectText").onclick = addGPTKey; //correctSelection;
+
+    document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
+    document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     //document.getElementById("BtnHelp").onclick = removeGPTKey;
   }
 });
@@ -107,8 +112,15 @@ export async function validateGPTKey() {
         gpt_key.load("value");
         await context.sync();
 
-        if (gpt_key.value == "test") console.log("Success");
-        else console.log("No success");
+        var chosen_key = gpt_key.value;
+        chosen_key = "test";
+
+        console.log("read key: " + chosen_key);
+        if (await key_validation(chosen_key)) {
+          console.log("Key is valid");
+        } else {
+          console.log("Key is not valid");
+        }
       } else {
         console.log("No key available");
       }

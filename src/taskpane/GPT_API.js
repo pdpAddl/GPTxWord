@@ -1,7 +1,6 @@
 const { Configuration, OpenAIApi } = require("openai");
-//require("process");
 
-var key = "";//process.env.OPENAI_API_KEY;
+var key = "";
 const configuration = new Configuration({
   apiKey: key,
 });
@@ -44,8 +43,8 @@ async function text_correction(API, text) {
 //   console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
 //   console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
 //   console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
-//   return response;
-// }
+  return response;
+}
 
 async function text_translation(API, text, Language) {
   const response = await API.createChatCompletion({
@@ -66,7 +65,7 @@ async function text_translation(API, text, Language) {
   return response;
 }
 
-async function key_validation(API) {
+export async function key_validation(API) {
   try {
     const response = await API.createCompletion({
       model: "ada",
@@ -95,8 +94,8 @@ async function image_generation(API, description) {
   console.log(image_url)
 }
 
-TEXT = "ich wollte nur";
-TEXT1 = "bonjour tu vas bien ou tu as des problèmes?";
+var TEXT = "ich wollte nur";
+var TEXT1 = "bonjour tu vas bien ou tu as des problèmes?";
 
 //Antwort = text_completion(openai, TEXT);
 //Antwort = text_correction(openai, TEXT);
