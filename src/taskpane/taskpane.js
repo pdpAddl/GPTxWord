@@ -3,7 +3,7 @@
  * See LICENSE in the project root for license information.
  */
 
-import { key_validation, set_key } from "./GPT_API.js";
+import { key_validation, set_key, text_completion, text_correction } from "./GPT_API.js";
 
 /* global document, Office, Word */
 
@@ -18,15 +18,18 @@ Office.onReady((info) => {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
 
-    document.getElementById("BtnAddText").onclick = validateGPTKey;
-    document.getElementById("BtnCorrectText").onclick = addGPTKey; //correctSelection;
+    document.getElementById("BtnAddText").onclick = addTextToSelection;
+    document.getElementById("BtnCorrectText").onclick = correctSelection;
 
     //document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
     //document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
     //document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     //document.getElementById("BtnHelp").onclick = removeGPTKey;
+
     document.getElementById("BtnConfig").onclick = toggleConfigPageVisibility;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick = addTextToSelection;
+    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
+    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
   }
 });
 
@@ -59,7 +62,7 @@ export async function addTextToSelection() {
     selectedText = rangeSelected.text;
 
     // TODO: Add Text via GPT API
-    addedText = " Test ";
+    addedText = await text_completion(selectedText);//.data.choices[0].message.content;
 
     // Insert string at the end of the selected area
     rangeSelected.insertText(addedText, Word.InsertLocation.end);
@@ -78,17 +81,25 @@ export async function correctSelection() {
      */
 
     var rangeSelected;
-    var correctedText;
+    var correctedText, selectedText;
 
     // Get Selected Range
     rangeSelected = context.document.getSelection();
-    rangeSelected.clear();
+
+    // Load selected string
+    rangeSelected.load("text");
 
     // Wait until everything is synced
     await context.sync();
 
+    // extract string to variable for further processing
+    selectedText = rangeSelected.text;
+
     // Correct Text via GPT API - TODO
-    correctedText = "abcdefg 12345 doijdas dasadssd asdafsds";
+    correctedText = await text_correction(selectedText);
+
+    // Delete previous selected text
+    rangeSelected.clear();
 
     // Insert corrected text with foot note
     rangeSelected.insertText(correctedText, Word.InsertLocation.start);
@@ -104,7 +115,7 @@ export async function addGPTKey() {
     context.document.properties.customProperties.load("items");
     await context.sync();
 
-    newKey = "test";
+    newKey = document.getElementById("configPage").contentWindow.document.getElementById("ApiKey").value;
 
     valid = await set_key(newKey);
     if (valid) {

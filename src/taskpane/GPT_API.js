@@ -46,7 +46,7 @@ export async function text_completion(text) {
   // console.log("Tokens für Antwort: "+response.data.usage.completion_tokens);
   // console.log("Insgesamt verwendete Token: "+response.data.usage.total_tokens);
 
-  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+  return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 export async function text_correction(text) {
@@ -66,7 +66,7 @@ export async function text_correction(text) {
   console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
   console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
 
-  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+  return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 export async function text_translation(text, Language) {
