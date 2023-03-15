@@ -47,25 +47,6 @@ async function text_correction(API, text) {
   return response;
 }
 
-async function text_correction(API, text) {
-  const response = await API.createChatCompletion({
-    model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
-    messages: [
-      { role: "system", content: "du antwortest sachlich" },
-      { role: "user", content: "Correct this text and keep the original Language: " + text },
-    ],
-  });
-
-/*  console.log("Anfrage: Correct Spelling and Grammar of the following Text and keep the original Language: " + text);
-  console.log("Antwort: " + response.data.choices[0].message.content);
-  console.log("Anfrage ID: " + response.data.id);
-  console.log("Tokens für Anfrage: " + response.data.usage.prompt_tokens);
-  console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
-  console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
-  console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
-  return response;
-}
-
 async function text_translation(API, text, Language) {
   const response = await API.createChatCompletion({
     model: "gpt-3.5-turbo", 
