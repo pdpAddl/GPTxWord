@@ -114,6 +114,9 @@ export async function correctSelection() {
       rangeSelected.insertText(correctedText, Word.InsertLocation.start);
       rangeSelected.insertFootnote("This text was corrected by the GPT AI");
 
+      // Insert comment displaying original text
+      rangeSelected.insertComment("Original text:\n" + selectedText);
+
       await context.sync();
     }
   });
