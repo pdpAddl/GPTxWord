@@ -10,7 +10,7 @@ import { key_validation, set_key, text_completion, text_correction } from "./GPT
 //require("./keyhandling.js");
 require("./GPT_API.js");
 
-var keyExists;
+var keyExists, keyValid;
 const KEYITEM_NAME = "GPTAPI_Key";
 
 Office.onReady((info) => {
@@ -27,16 +27,18 @@ Office.onReady((info) => {
     //document.getElementById("BtnHelp").onclick = removeGPTKey;
 
     document.getElementById("BtnConfig").onclick = toggleConfigPageVisibility;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
+    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick =
+      removeGPTKey;
     document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
+    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyVerify").onclick =
+      validateGPTKey;
   }
 });
 
 function toggleConfigPageVisibility() {
   var element = document.getElementById("configPage");
-  var style = window.getComputedStyle( element, null );
-  style.visibility === "visible" ? element.style.visibility = "hidden" : element.style.visibility = "visible";
+  var style = window.getComputedStyle(element, null);
+  style.visibility === "visible" ? (element.style.visibility = "hidden") : (element.style.visibility = "visible");
 }
 
 export async function addTextToSelection() {
@@ -49,28 +51,31 @@ export async function addTextToSelection() {
     var selectedText;
     var addedText;
 
-    // Get Selected Range
-    rangeSelected = context.document.getSelection();
+    await checkGPTKeyExists();
+    await validateGPTKey();
 
-    // Load selected string
-    rangeSelected.load("text");
+    if (keyExists && keyValid) {
+      // Get Selected Range
+      rangeSelected = context.document.getSelection();
 
-    // Wait until everything is synced
-    await context.sync();
+      // Load selected string
+      rangeSelected.load("text");
 
-    // extract string to variable for further processing
-    selectedText = rangeSelected.text;
+      // Wait until everything is synced
+      await context.sync();
 
-    // TODO: Add Text via GPT API
-    addedText = await text_completion(selectedText);//.data.choices[0].message.content;
+      // extract string to variable for further processing
+      selectedText = rangeSelected.text;
 
-    // Insert string at the end of the selected area
-    rangeSelected.insertText(addedText, Word.InsertLocation.end);
-    rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
+      // TODO: Add Text via GPT API
+      addedText = await text_completion(selectedText); //.data.choices[0].message.content;
 
-    // Insert added text with foot note
+      // Insert string at the end of the selected area
+      rangeSelected.insertText(addedText, Word.InsertLocation.end);
+      rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
 
-    await context.sync();
+      await context.sync();
+    }
   });
 }
 
@@ -83,29 +88,34 @@ export async function correctSelection() {
     var rangeSelected;
     var correctedText, selectedText;
 
-    // Get Selected Range
-    rangeSelected = context.document.getSelection();
+    await checkGPTKeyExists();
+    await validateGPTKey();
 
-    // Load selected string
-    rangeSelected.load("text");
+    if (keyExists && keyValid) {
+      // Get Selected Range
+      rangeSelected = context.document.getSelection();
 
-    // Wait until everything is synced
-    await context.sync();
+      // Load selected string
+      rangeSelected.load("text");
 
-    // extract string to variable for further processing
-    selectedText = rangeSelected.text;
+      // Wait until everything is synced
+      await context.sync();
 
-    // Correct Text via GPT API - TODO
-    correctedText = await text_correction(selectedText);
+      // extract string to variable for further processing
+      selectedText = rangeSelected.text;
 
-    // Delete previous selected text
-    rangeSelected.clear();
+      // Correct Text via GPT API - TODO
+      correctedText = await text_correction(selectedText);
 
-    // Insert corrected text with foot note
-    rangeSelected.insertText(correctedText, Word.InsertLocation.start);
-    rangeSelected.insertFootnote("This text was corrected by the GPT AI");
+      // Delete previous selected text
+      rangeSelected.clear();
 
-    await context.sync();
+      // Insert corrected text with foot note
+      rangeSelected.insertText(correctedText, Word.InsertLocation.start);
+      rangeSelected.insertFootnote("This text was corrected by the GPT AI");
+
+      await context.sync();
+    }
   });
 }
 
@@ -135,28 +145,28 @@ export async function addGPTKey() {
 
 export async function validateGPTKey() {
   return Word.run(async (context) => {
-    checkGPTKeyExists().then(async function () {
-      if (keyExists) {
-        const properties = context.document.properties.customProperties;
+    keyValid = false;
+    if (keyExists) {
+      const properties = context.document.properties.customProperties;
 
-        var gpt_key = properties.getItem(KEYITEM_NAME);
+      var gpt_key = properties.getItem(KEYITEM_NAME);
 
-        gpt_key.load("value");
-        await context.sync();
+      gpt_key.load("value");
+      await context.sync();
 
-        var chosen_key = gpt_key.value;
-        //chosen_key = "test";
+      var chosen_key = gpt_key.value;
+      //chosen_key = "test";
 
-        console.log("read key: " + chosen_key);
-        if (await set_key(chosen_key)) {
-          console.log("Key is valid");
-        } else {
-          console.log("Key is not valid");
-        }
+      console.log("read key: " + chosen_key);
+      if (await set_key(chosen_key)) {
+        console.log("Key is valid");
+        keyValid = true;
       } else {
-        console.log("No key available");
+        console.log("Key is not valid");
       }
-    });
+    } else {
+      console.log("No key available");
+    }
   });
 }
 
