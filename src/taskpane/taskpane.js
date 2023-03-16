@@ -3,7 +3,7 @@
  * See LICENSE in the project root for license information.
  */
 
-import { key_validation, set_key, text_completion, text_correction } from "./GPT_API.js";
+import { key_validation, set_key, text_completion_Davinci, text_completion_GPT3, text_correction_Davinci, text_correction_GPT3 } from "./GPT_API.js";
 
 /* global document, Office, Word */
 
@@ -68,7 +68,7 @@ export async function addTextToSelection() {
       selectedText = rangeSelected.text;
 
       // TODO: Add Text via GPT API
-      addedText = await text_completion(selectedText); //.data.choices[0].message.content;
+      addedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
 
       // Insert string at the end of the selected area
       rangeSelected.insertText(addedText, Word.InsertLocation.end);
@@ -105,7 +105,7 @@ export async function correctSelection() {
       selectedText = rangeSelected.text;
 
       // Correct Text via GPT API - TODO
-      correctedText = await text_correction(selectedText);
+      correctedText = await text_correction_Davinci(selectedText);
 
       // Delete previous selected text
       rangeSelected.clear();

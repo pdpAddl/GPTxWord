@@ -1,6 +1,6 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-var key = "";
+
 
 const configuration = new Configuration({
   apiKey: key,
@@ -30,7 +30,7 @@ export async function set_key(newKey) {
 
 // const openai = new OpenAIApi(configuration);
 
-export async function text_completion(text) {
+export async function text_completion_GPT3(text) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
@@ -49,12 +49,24 @@ export async function text_completion(text) {
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-export async function text_correction(text) {
+export async function text_completion_Davinci (text){
+  const response = await currentOPENAIApi.createCompletion({
+    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    prompt: "Complete this text and keep the original language: " + text,
+    temperature: 0,
+    max_tokens: 100,
+  });
+
+  console.log("Antwort: "+response.data.choices[0].text);
+  return  response;
+}
+
+export async function text_correction_GPT3(text) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
       { role: "system", content: "du antwortest sachlich" },
-      { role: "user", content: "Correct this text and keep the original Language: " + text },
+      { role: "user", content: "Correct Spelling and Grammar of the following Text and keep the original Languageof the following text: " + text },
     ],
   });
 
@@ -67,6 +79,18 @@ export async function text_correction(text) {
   console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
 
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
+}
+
+export async function text_correction_Davinci (text){
+  const response = await currentOPENAIApi.createCompletion({
+    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    prompt: "Correct Spelling and Grammar of the following text and keep the original Language of the following text: " + text,
+    temperature: 0,
+    max_tokens: 100,
+  });
+
+  console.log("Antwort: "+response.data.choices[0].text);
+  return  response;
 }
 
 export async function text_translation(text, Language) {
@@ -89,7 +113,7 @@ export async function text_translation(text, Language) {
   return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-async function key_validation(API) {
+export async function key_validation(API) {
   try {
     const response = await API.createCompletion({
       model: "ada",
@@ -97,7 +121,6 @@ async function key_validation(API) {
       max_tokens: 1,
     });
     console.log("Kein Error");
-    console.log(response.data.choices[0].text);
     return true;
   } catch (error) {
     console.error(error);
@@ -116,10 +139,19 @@ export async function image_generation(description) {
   console.log(image_url);
 }
 
-//set_key(key);
+TextMitFehlern = "falls du bis morgen noch Zeit/Lust hast köntest du eventül noch ne Funktion implementieren, in der der API Key angewandt/überschrieben wird. ";
+TextZumFortführen = "George washington war der";
 
-//text_completion(TEXT);
-//text_correction(TEXT);
+set_key(key);
+
+text_completion_Davinci(TextZumFortführen);
+
+//text_completion_GPT3(TextZumFortführen);
+
+text_correction_Davinci(TextMitFehlern);
+
+//text_correction_GPT3(TextMitFehlern);
+
 //text_translation(TEXT1,"deutsch")
 //key_validation();
 //image_generation(null);
