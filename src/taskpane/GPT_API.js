@@ -1,6 +1,6 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-
+var key;
 
 const configuration = new Configuration({
   apiKey: key,
@@ -58,7 +58,7 @@ export async function text_completion_Davinci (text){
   });
 
   console.log("Antwort: "+response.data.choices[0].text);
-  return  response;
+  return response.data.choices[0].text;
 }
 
 export async function text_correction_GPT3(text) {
@@ -90,7 +90,7 @@ export async function text_correction_Davinci (text){
   });
 
   console.log("Antwort: "+response.data.choices[0].text);
-  return  response;
+  return  response.data.choices[0].text;
 }
 
 export async function text_translation(text, Language) {
@@ -135,20 +135,20 @@ export async function image_generation(description) {
     n: 1,
     size: "1024x1024",
   });
-  image_url = await response.data.data[0].url;
+  var image_url = await response.data.data[0].url;
   console.log(image_url);
 }
 
-TextMitFehlern = "falls du bis morgen noch Zeit/Lust hast köntest du eventül noch ne Funktion implementieren, in der der API Key angewandt/überschrieben wird. ";
-TextZumFortführen = "George washington war der";
+//TextMitFehlern = "falls du bis morgen noch Zeit/Lust hast köntest du eventül noch ne Funktion implementieren, in der der API Key angewandt/überschrieben wird. ";
+//TextZumFortführen = "George washington war der";
 
-set_key(key);
+//set_key(key);
 
-text_completion_Davinci(TextZumFortführen);
+//text_completion_Davinci(TextZumFortführen);
 
 //text_completion_GPT3(TextZumFortführen);
 
-text_correction_Davinci(TextMitFehlern);
+//text_correction_Davinci(TextMitFehlern);
 
 //text_correction_GPT3(TextMitFehlern);
 
