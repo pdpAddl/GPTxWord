@@ -21,24 +21,12 @@ Office.onReady((info) => {
     document.getElementById("BtnAddText").onclick = addTextToSelection;
     document.getElementById("BtnCorrectText").onclick = correctSelection;
 
-    //document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    //document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
-    //document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
-    //document.getElementById("BtnHelp").onclick = removeGPTKey;
-
-    document.getElementById("BtnConfig").onclick = toggleConfigPageVisibility;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick =
-      removeGPTKey;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyVerify").onclick =
-      validateGPTKey;
+    document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
+    document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
   }
 });
 
-function toggleConfigPageVisibility() {
-  var element = document.getElementById("configPage");
-  var style = window.getComputedStyle(element, null);
-  style.visibility === "visible" ? (element.style.visibility = "hidden") : (element.style.visibility = "visible");
 }
 
 export async function addTextToSelection() {
