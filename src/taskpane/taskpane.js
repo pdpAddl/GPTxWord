@@ -27,6 +27,9 @@ Office.onReady((info) => {
   }
 });
 
+function setApiKeyStatusIcon( makeVisible ) {
+  document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
+  document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
 }
 
 export async function addTextToSelection() {
@@ -113,17 +116,18 @@ export async function addGPTKey() {
     context.document.properties.customProperties.load("items");
     await context.sync();
 
-    newKey = document.getElementById("configPage").contentWindow.document.getElementById("ApiKey").value;
+    newKey = document.getElementById("ApiKey").value;
 
     valid = await set_key(newKey);
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
-
+      setApiKeyStatusIcon( true );
       console.log("Key applied");
     } else {
       // Error message, wrong key
       console.log("Key denied");
+      setApiKeyStatusIcon( false );
     }
 
     await context.sync();
@@ -155,6 +159,7 @@ export async function validateGPTKey() {
     } else {
       console.log("No key available");
     }
+    setApiKeyStatusIcon( keyValid ? true : false );
   });
 }
 
@@ -172,6 +177,7 @@ export async function removeGPTKey() {
 
         await context.sync();
         console.log(context.document.properties.customProperties.items);
+        setApiKeyStatusIcon( false );
       } else {
         console.log("No key to remove");
       }
