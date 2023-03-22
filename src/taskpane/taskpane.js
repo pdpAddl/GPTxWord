@@ -3,7 +3,14 @@
  * See LICENSE in the project root for license information.
  */
 
-import { key_validation, set_key, text_completion_Davinci, text_completion_GPT3, text_correction_Davinci, text_correction_GPT3 } from "./GPT_API.js";
+import {
+  key_validation,
+  set_key,
+  text_completion_Davinci,
+  text_completion_GPT3,
+  text_correction_Davinci,
+  text_correction_GPT3,
+} from "./GPT_API.js";
 
 /* global document, Office, Word */
 
@@ -27,9 +34,9 @@ Office.onReady((info) => {
   }
 });
 
-function setApiKeyStatusIcon( makeVisible ) {
-  document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
-  document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
+function setApiKeyStatusIcon(makeVisible) {
+  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "inline" : "none";
+  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "inline";
 }
 
 export async function addTextToSelection() {
@@ -38,7 +45,7 @@ export async function addTextToSelection() {
      * Insert your Word code here
      */
 
-    var rangeSelected;
+    var rangeSelected, rangeInserted;
     var selectedText;
     var addedText;
 
@@ -55,16 +62,25 @@ export async function addTextToSelection() {
       // Wait until everything is synced
       await context.sync();
 
-      // extract string to variable for further processing
+      // Extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // TODO: Add Text via GPT API
+      // Add Text via GPT API
       addedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
 
       // Insert string at the end of the selected area
-      rangeSelected.insertText(addedText, Word.InsertLocation.end);
+      rangeInserted = rangeSelected.insertText(addedText, Word.InsertLocation.end);
+      //rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
+
+      // Insert footnote with the same font as the selected text
       rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
 
+      rangeInserted.load("font");
+      await context.sync();
+      rangeSelected.load("font");
+      await context.sync();
+
+      rangeInserted.font.superscript = false;
       await context.sync();
     }
   });
@@ -125,12 +141,12 @@ export async function addGPTKey() {
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
-      setApiKeyStatusIcon( true );
+      setApiKeyStatusIcon(true);
       console.log("Key applied");
     } else {
       // Error message, wrong key
       console.log("Key denied");
-      setApiKeyStatusIcon( false );
+      setApiKeyStatusIcon(false);
     }
 
     await context.sync();
@@ -162,7 +178,7 @@ export async function validateGPTKey() {
     } else {
       console.log("No key available");
     }
-    setApiKeyStatusIcon( keyValid );
+    setApiKeyStatusIcon(keyValid);
   });
 }
 
@@ -180,7 +196,7 @@ export async function removeGPTKey() {
 
         await context.sync();
         console.log(context.document.properties.customProperties.items);
-        setApiKeyStatusIcon( false );
+        setApiKeyStatusIcon(false);
       } else {
         console.log("No key to remove");
       }
