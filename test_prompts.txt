@@ -1,0 +1,3 @@
+text completion:
+Prompt:             I have been told to go outside because the weather is very nice. When I will be outside, I will do different fun activities: 
+Expected Result:    List activities
