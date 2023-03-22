@@ -159,7 +159,7 @@ export async function validateGPTKey() {
     } else {
       console.log("No key available");
     }
-    setApiKeyStatusIcon( keyValid ? true : false );
+    setApiKeyStatusIcon( keyValid );
   });
 }
 

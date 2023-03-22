@@ -52,15 +52,41 @@
 
         <!-- Tab Config -->
         <div id="tabConfig" class="tabcontent">
-            <label for="ApiKey">Enter your API Key:</label>
-            <input type="text" id="ApiKey" name="ApiKey">
-            <button class="btn" id="BtnApiKeyConfirm">Apply</button>
-            <button class="btn" id="BtnApiKeyReset">Reset</button>
-            <button class="btn" id="BtnApiKeyVerify">Verify Key</button>
-            <img class="ApiKeyConfirmed" id="IconApiKeyVerified" alt="Key Confirmed" src="../../assets/checkmark-svgrepo-com.svg" width="30" height="30">
-            <img class="ApiKeyUnconfirmed" id="IconApiKeyFalse" alt="Key Unconfirmed" src="../../assets/cancel-svgrepo-com.svg" width="30" height="30">
+            <div id="ApiConfig">
+                <label for="ApiKey">Enter your API Key:</label>
+                <input type="password" id="ApiKey" name="ApiKey">
+                <button class="btn" id="BtnApiKeyConfirm">Apply</button>
+                <button class="btn" id="BtnApiKeyReset">Reset</button>
+                <button class="btn" id="BtnApiKeyVerify">Verify Key</button>
+                <img class="ApiKeyConfirmed" id="IconApiKeyVerified" alt="Key Confirmed" src="../../assets/checkmark-svgrepo-com.svg" width="30" height="30">
+                <img class="ApiKeyUnconfirmed" id="IconApiKeyFalse" alt="Key Unconfirmed" src="../../assets/cancel-svgrepo-com.svg" width="30" height="30">
+            </div>
+            <br>
+            <!-- access: document.getElementById("ApiLanguage").value -->
+            <div id="LanguageConfig">
+                <label for="ApiLanguage">GPT Language:</label>
+                <select name="ApiLanguage" id="ApiLanguage">
+                    <option value="auto">auto detect</option>
+                    <option value="german">Deutsch</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            <br>
+            <div id="ApiModelConfig">
+                <label for="ApiModel">GPT Model:</label>
+                <select name="ApiModel" id="ApiModel">
+                    <option value="gpt-3.5-turbo">Chat-GPT</option>
+                    <option value="davinci">Davinci</option>
+                </select>
+            </div>
+            <br>
+            <!-- access: document.getElementById("FootnotesBox").checked -->
+            <div id="FootnotesConfig">
+                <label for="FootnotesBox">Generate Footnotes:</label>
+                <input type="checkbox" id="FootnotesBox" name="FootnotesBox" checked>
+            </div>
         </div>
-
+        
         <!-- script to change Tabs-->
         <script>
             function changeTab( event, tabName ) {
