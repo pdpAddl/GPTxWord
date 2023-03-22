@@ -3,7 +3,7 @@
  * See LICENSE in the project root for license information.
  */
 
-import { key_validation, set_key, text_completion, text_correction } from "./GPT_API.js";
+import { key_validation, set_key, text_completion_Davinci, text_completion_GPT3, text_correction_Davinci, text_correction_GPT3 } from "./GPT_API.js";
 
 /* global document, Office, Word */
 
@@ -21,24 +21,15 @@ Office.onReady((info) => {
     document.getElementById("BtnAddText").onclick = addTextToSelection;
     document.getElementById("BtnCorrectText").onclick = correctSelection;
 
-    //document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    //document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
-    //document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
-    //document.getElementById("BtnHelp").onclick = removeGPTKey;
-
-    document.getElementById("BtnConfig").onclick = toggleConfigPageVisibility;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyReset").onclick =
-      removeGPTKey;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("configPage").contentWindow.document.getElementById("BtnApiKeyVerify").onclick =
-      validateGPTKey;
+    document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
+    document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
+    document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
   }
 });
 
-function toggleConfigPageVisibility() {
-  var element = document.getElementById("configPage");
-  var style = window.getComputedStyle(element, null);
-  style.visibility === "visible" ? (element.style.visibility = "hidden") : (element.style.visibility = "visible");
+function setApiKeyStatusIcon( makeVisible ) {
+  document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
+  document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
 }
 
 export async function addTextToSelection() {
@@ -68,7 +59,7 @@ export async function addTextToSelection() {
       selectedText = rangeSelected.text;
 
       // TODO: Add Text via GPT API
-      addedText = await text_completion(selectedText); //.data.choices[0].message.content;
+      addedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
 
       // Insert string at the end of the selected area
       rangeSelected.insertText(addedText, Word.InsertLocation.end);
@@ -105,7 +96,7 @@ export async function correctSelection() {
       selectedText = rangeSelected.text;
 
       // Correct Text via GPT API - TODO
-      correctedText = await text_correction(selectedText);
+      correctedText = await text_correction_Davinci(selectedText);
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -128,17 +119,18 @@ export async function addGPTKey() {
     context.document.properties.customProperties.load("items");
     await context.sync();
 
-    newKey = document.getElementById("configPage").contentWindow.document.getElementById("ApiKey").value;
+    newKey = document.getElementById("ApiKey").value;
 
     valid = await set_key(newKey);
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
-
+      setApiKeyStatusIcon( true );
       console.log("Key applied");
     } else {
       // Error message, wrong key
       console.log("Key denied");
+      setApiKeyStatusIcon( false );
     }
 
     await context.sync();
@@ -170,6 +162,7 @@ export async function validateGPTKey() {
     } else {
       console.log("No key available");
     }
+    setApiKeyStatusIcon( keyValid );
   });
 }
 
@@ -187,6 +180,7 @@ export async function removeGPTKey() {
 
         await context.sync();
         console.log(context.document.properties.customProperties.items);
+        setApiKeyStatusIcon( false );
       } else {
         console.log("No key to remove");
       }

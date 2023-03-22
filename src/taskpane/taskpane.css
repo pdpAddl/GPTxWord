@@ -16,6 +16,45 @@
      padding: 0;
  }
  
+ /* TABS */
+ .tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+ }
+
+ .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: auto;
+    transition: 0.3s;
+ }
+
+ .tab button:hover {
+    background-color: #ddd;
+ }
+
+ .tab button.active {
+    background-color: #ccc;
+ }
+
+ .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    /* border-top: none; */
+    animation: fadeEffect 0.5s;
+ }
+
+ @keyframes fadeEffect {
+   from {opacity: 0;}
+   to{opacity: 1;}
+ }
+
+ /* BUTTONS */
  .btn-help {
     content: url("../../assets/help-svgrepo-com.svg");
     
@@ -37,11 +76,11 @@
  }
 
  .ApiKeyConfirmed {
-    visibility: hidden;
+   display: none;
  }
 
  .ApiKeyUnconfirmed {
-    visibility: visible;
+    display: inline;
  }
 
 

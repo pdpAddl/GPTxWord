@@ -32,22 +32,90 @@
         <h2 class="ms-font-xl">Please sideload your add-in to see app body.</h2>
     </section>
     <main id="app-body" class="ms-welcome__main" style="display: none;">
-        <button class="btn" id="BtnCorrectText" type="button">Correct highlighted text</button>
-        <br>
-        <button class="btn" id="BtnAddText" type="button">Add text</button>
-        <br>
-        <!-- <a href="config.html">
-            <img alt="Config" src="../../assets/settings-svgrepo-com.svg" width="40" height="40">
-        </a> -->
-        <button class="btn-config" id="BtnConfig" type="button">
-            <img src="../../assets/settings-svgrepo-com.svg" height="30" width="30"></img>
-        </button>
-        <iframe src="config.html" id="configPage" title="Config Page" width="100%" style="border:1px solid black; visibility: hidden;"></iframe>
+        <!-- Tab Links -->
+        <div class="tab">
+            <button class="tablink" id="defaultTab" onclick="changeTab( event, 'tabMain' )">
+                <img src="../../assets/home-1-svgrepo-com.svg" height="30" width="30"></img>
+            </button>   
+            <button class="tablink" onclick="changeTab( event, 'tabConfig' )">
+                <img src="../../assets/settings-svgrepo-com.svg" height="30" width="30"></img>
+            </button>
+        </div>
 
-        <!-- <p class="ms-font-l">Modify the source files, then click <b>Run</b>.</p>
-        <div role="button" id="run" class="ms-welcome__action ms-Button ms-Button--hero ms-font-xl">
-            <span class="ms-Button-label">Run</span>
-        </div> -->
+        <!-- Tab Main -->
+        <div id="tabMain" class="tabcontent">
+            <button class="btn" id="BtnCorrectText" type="button">Correct highlighted text</button>
+            <br>
+            <button class="btn" id="BtnAddText" type="button">Add text</button>
+            <br>
+        </div>
+
+        <!-- Tab Config -->
+        <div id="tabConfig" class="tabcontent">
+            <div id="ApiConfig">
+                <label for="ApiKey">Enter your API Key:</label>
+                <input type="password" id="ApiKey" name="ApiKey">
+                <button class="btn" id="BtnApiKeyConfirm">Apply</button>
+                <button class="btn" id="BtnApiKeyReset">Reset</button>
+                <button class="btn" id="BtnApiKeyVerify">Verify Key</button>
+                <img class="ApiKeyConfirmed" id="IconApiKeyVerified" alt="Key Confirmed" src="../../assets/checkmark-svgrepo-com.svg" width="30" height="30">
+                <img class="ApiKeyUnconfirmed" id="IconApiKeyFalse" alt="Key Unconfirmed" src="../../assets/cancel-svgrepo-com.svg" width="30" height="30">
+            </div>
+            <br>
+            <!-- access: document.getElementById("ApiLanguage").value -->
+            <div id="LanguageConfig">
+                <label for="ApiLanguage">GPT Language:</label>
+                <select name="ApiLanguage" id="ApiLanguage">
+                    <option value="auto">auto detect</option>
+                    <option value="german">Deutsch</option>
+                    <option value="english">English</option>
+                </select>
+            </div>
+            <br>
+            <div id="ApiModelConfig">
+                <label for="ApiModel">GPT Model:</label>
+                <select name="ApiModel" id="ApiModel">
+                    <option value="gpt-3.5-turbo">Chat-GPT</option>
+                    <option value="davinci">Davinci</option>
+                </select>
+            </div>
+            <br>
+            <!-- access: document.getElementById("FootnotesBox").checked -->
+            <div id="FootnotesConfig">
+                <label for="FootnotesBox">Generate Footnotes:</label>
+                <input type="checkbox" id="FootnotesBox" name="FootnotesBox" checked>
+            </div>
+        </div>
+        
+        <!-- script to change Tabs-->
+        <script>
+            function changeTab( event, tabName ) {
+                var i, tabcontent, tablinks
+                // hide all tabs
+                tabcontent = document.getElementsByClassName( "tabcontent" );
+                for( i = 0; i < tabcontent.length; i++ )
+                {
+                    tabcontent[i].style.display = "none";
+                }
+                
+                // remove class active from tablinks
+                tablinks = document.getElementsByClassName( "tablink" );
+                for( i = 0; i < tablinks.length; i++ )
+                {
+                    tablinks[i].className = tablinks[i].className.replace( " active", "" );
+                }
+                
+                // show current tab, add an active class to the button
+                document.getElementById( tabName ).style.display = "block";
+                event.currentTarget.className += " active";
+            }
+        </script>
+
+        <!-- script for default tab-->
+        <script>
+            document.getElementById("defaultTab").click();
+        </script>
+
     </main>
 </body>
 
