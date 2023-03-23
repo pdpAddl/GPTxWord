@@ -45,9 +45,9 @@ export async function addTextToSelection() {
      * Insert your Word code here
      */
 
-    var rangeSelected, rangeInserted;
+    var rangeSelected, rangeInserted, rangeSpace;
     var selectedText;
-    var addedText;
+    var generatedText, processedText;
 
     await checkGPTKeyExists();
     await validateGPTKey();
@@ -58,6 +58,7 @@ export async function addTextToSelection() {
 
       // Load selected string
       rangeSelected.load("text");
+      rangeSelected.load("font");
 
       // Wait until everything is synced
       await context.sync();
@@ -66,21 +67,24 @@ export async function addTextToSelection() {
       selectedText = rangeSelected.text;
 
       // Add Text via GPT API
-      addedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
+      generatedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
+
+      // Process text to fit into the document
+      processedText = processParagraph(generatedText);
 
       // Insert string at the end of the selected area
-      rangeInserted = rangeSelected.insertText(addedText, Word.InsertLocation.end);
-      //rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
+      rangeInserted = rangeSelected.insertText(processedText, Word.InsertLocation.end);
 
       // Insert footnote with the same font as the selected text
       rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
 
-      rangeInserted.load("font");
-      await context.sync();
-      rangeSelected.load("font");
+      // Insert space at the end of the inserted text
+      rangeSpace = rangeSelected.insertText(" ", Word.InsertLocation.end);
+
+      rangeSpace.load("font");
       await context.sync();
 
-      rangeInserted.font.superscript = false;
+      rangeSpace.font.superscript = false;
       await context.sync();
     }
   });
@@ -93,7 +97,7 @@ export async function correctSelection() {
      */
 
     var rangeSelected;
-    var correctedText, selectedText;
+    var correctedText, processedText, selectedText;
 
     await checkGPTKeyExists();
     await validateGPTKey();
@@ -117,8 +121,11 @@ export async function correctSelection() {
       // Delete previous selected text
       rangeSelected.clear();
 
+      // Process text to fit into the document
+      processedText = processParagraph(correctedText);
+
       // Insert corrected text with foot note
-      rangeSelected.insertText(correctedText, Word.InsertLocation.start);
+      rangeSelected.insertText(processedText, Word.InsertLocation.start);
       rangeSelected.insertFootnote("This text was corrected by the GPT AI");
 
       // Insert comment displaying original text
@@ -128,6 +135,15 @@ export async function correctSelection() {
     }
   });
 }
+
+// ----------------TEXT CONCAT--------------------
+function processParagraph(text){
+  // remove whitespaces
+  text = text.replace(/\s+/g, ' ').trim();
+  return text;
+}
+
+// ------------------KEY--------------------------
 
 export async function addGPTKey() {
   return Word.run(async (context) => {
