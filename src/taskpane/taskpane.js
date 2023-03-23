@@ -17,7 +17,6 @@ import {
 //require("./keyhandling.js");
 require("./GPT_API.js");
 
-var keyExists, keyValid;
 const KEYITEM_NAME = "GPTAPI_Key";
 
 Office.onReady((info) => {
@@ -49,10 +48,7 @@ export async function addTextToSelection() {
     var selectedText;
     var generatedText, processedText;
 
-    await checkGPTKeyExists();
-    await verifyGPTKey();
-
-    if (keyExists && keyValid) {
+    if (await verifyGPTKey()) {
       // Get Selected Range
       rangeSelected = context.document.getSelection();
 
@@ -102,7 +98,7 @@ export async function correctSelection() {
     await checkGPTKeyExists();
     await verifyGPTKey();
 
-    if (keyExists && keyValid) {
+    if (await verifyGPTKey()) {
       // Get Selected Range
       rangeSelected = context.document.getSelection();
 
@@ -170,9 +166,32 @@ export async function addGPTKey() {
   });
 }
 
-export async function verifyGPTKey() {
+export async function removeGPTKey() {
   return Word.run(async (context) => {
-    keyValid = false;
+    if (await checkGPTKeyExists()) {
+      const properties = context.document.properties.customProperties;
+
+      context.document.properties.customProperties.load("items");
+      await context.sync();
+
+      properties.getItem(KEYITEM_NAME).delete();
+      //gpt_key.delete();
+
+      await context.sync();
+      console.log(context.document.properties.customProperties.items);
+      setApiKeyStatusIcon(false);
+    } else {
+      console.log("No key to remove");
+    }
+  });
+}
+
+export async function verifyGPTKey() {
+  await Word.run(async (context) => {
+
+    var keyExists = await checkGPTKeyExists();
+    var keyValid = false;
+
     if (keyExists) {
       const properties = context.document.properties.customProperties;
 
@@ -195,42 +214,26 @@ export async function verifyGPTKey() {
       console.log("No key available");
     }
     setApiKeyStatusIcon(keyValid);
+    return keyValid;
   });
 }
 
-export async function removeGPTKey() {
-  return Word.run(async (context) => {
-    checkGPTKeyExists().then(async function () {
-      if (keyExists) {
-        const properties = context.document.properties.customProperties;
-
-        context.document.properties.customProperties.load("items");
-        await context.sync();
-
-        properties.getItem(KEYITEM_NAME).delete();
-        //gpt_key.delete();
-
-        await context.sync();
-        console.log(context.document.properties.customProperties.items);
-        setApiKeyStatusIcon(false);
-      } else {
-        console.log("No key to remove");
-      }
-    });
-  });
-}
-
+// return true/false if key exists
 export async function checkGPTKeyExists() {
-  return Word.run(async (context) => {
+  var keyExists = false;
+  await Word.run(async (context) => {
     const properties = context.document.properties.customProperties;
 
     context.document.properties.customProperties.load("items");
     properties.load("key");
-
     await context.sync();
 
-    keyExists = false;
-    for (let i = 0; i < properties.items.length; i++) if (properties.items[i].key == KEYITEM_NAME) keyExists = true;
-    console.log(keyExists);
+    for (let i = 0; i < properties.items.length; i++) {
+      if (properties.items[i].key === KEYITEM_NAME) {
+        keyExists = true;
+        break;
+      }
+    }
   });
+  return keyExists;
 }
