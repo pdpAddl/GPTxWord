@@ -30,7 +30,7 @@ Office.onReady((info) => {
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
+    document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
   }
 });
 
@@ -45,12 +45,12 @@ export async function addTextToSelection() {
      * Insert your Word code here
      */
 
-    var rangeSelected, rangeInserted, rangeSpace;
+    var rangeSelected, rangeSpace;
     var selectedText;
     var generatedText, processedText;
 
     await checkGPTKeyExists();
-    await validateGPTKey();
+    await verifyGPTKey();
 
     if (keyExists && keyValid) {
       // Get Selected Range
@@ -70,10 +70,10 @@ export async function addTextToSelection() {
       generatedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
 
       // Process text to fit into the document
-      processedText = processParagraph(generatedText);
+      processedText = processTextToInsert(generatedText);
 
       // Insert string at the end of the selected area
-      rangeInserted = rangeSelected.insertText(processedText, Word.InsertLocation.end);
+      rangeSelected.insertText(processedText, Word.InsertLocation.end);
 
       // Insert footnote with the same font as the selected text
       rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
@@ -100,7 +100,7 @@ export async function correctSelection() {
     var correctedText, processedText, selectedText;
 
     await checkGPTKeyExists();
-    await validateGPTKey();
+    await verifyGPTKey();
 
     if (keyExists && keyValid) {
       // Get Selected Range
@@ -115,14 +115,14 @@ export async function correctSelection() {
       // extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // Correct Text via GPT API - TODO
+      // Correct Text via GPT API
       correctedText = await text_correction_Davinci(selectedText);
 
       // Delete previous selected text
       rangeSelected.clear();
 
       // Process text to fit into the document
-      processedText = processParagraph(correctedText);
+      processedText = processTextToInsert(correctedText);
 
       // Insert corrected text with foot note
       rangeSelected.insertText(processedText, Word.InsertLocation.start);
@@ -136,10 +136,10 @@ export async function correctSelection() {
   });
 }
 
-// ----------------TEXT CONCAT--------------------
-function processParagraph(text){
+// ----------------TEXT Alignment--------------------
+function processTextToInsert(text) {
   // remove whitespaces
-  text = text.replace(/\s+/g, ' ').trim();
+  text = text.replace(/\s+/g, " ").trim();
   return text;
 }
 
@@ -170,7 +170,7 @@ export async function addGPTKey() {
   });
 }
 
-export async function validateGPTKey() {
+export async function verifyGPTKey() {
   return Word.run(async (context) => {
     keyValid = false;
     if (keyExists) {
