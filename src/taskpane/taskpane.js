@@ -68,22 +68,17 @@ export async function addTextToSelection() {
       generatedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
 
       // Process text to fit into the document
-      processedText = processTextToInsert(generatedText);
+      processedText = removeWhiteSpaces(generatedText);
 
       // Insert string at the end of the selected area
       rangeSelected.insertText(processedText, Word.InsertLocation.end);
 
       // Insert footnote with the same font as the selected text
-      rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
+      if (document.getElementById("FootnotesBox").checked)
+        rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
 
       // Insert space at the end of the inserted text
-      rangeSpace = rangeSelected.insertText(" ", Word.InsertLocation.end);
-
-      rangeSpace.load("font");
-      await context.sync();
-
-      rangeSpace.font.superscript = false;
-      await context.sync();
+      await insertSpace(rangeSelected);
     } else {
       console.log("Key not verified");
     }
@@ -122,11 +117,15 @@ export async function correctSelection() {
       rangeSelected.clear();
 
       // Process text to fit into the document
-      processedText = processTextToInsert(correctedText);
+      processedText = removeWhiteSpaces(correctedText);
 
       // Insert corrected text with foot note
       rangeSelected.insertText(processedText, Word.InsertLocation.start);
-      rangeSelected.insertFootnote("This text was corrected by the GPT AI");
+      if (document.getElementById("FootnotesBox").checked)
+        rangeSelected.insertFootnote("This text was corrected by the GPT AI");
+
+      // Insert space at the end of the inserted text
+      await insertSpace(rangeSelected);
 
       // Insert comment displaying original text
       rangeSelected.insertComment("Original text:\n" + selectedText);
@@ -138,15 +137,24 @@ export async function correctSelection() {
   });
 }
 
-// ----------------TEXT Alignment--------------------
-function processTextToInsert(text) {
-  // remove whitespaces
+// ----------------TEXT-ALIGNMENT--------------------
+function removeWhiteSpaces(text) {
   text = text.replace(/\s+/g, " ").trim();
   return text;
 }
 
-// ------------------KEY--------------------------
+async function insertSpace(range) {
+  return Word.run(async (context) => {
+    var rangeSpace = range.insertText(" ", Word.InsertLocation.end);
 
+    rangeSpace.load("font");
+    await context.sync();
+
+    rangeSpace.font.superscript = false;
+  });
+}
+
+// ------------------KEY--------------------------
 export async function addGPTKey() {
   return Word.run(async (context) => {
     var valid, newKey;
