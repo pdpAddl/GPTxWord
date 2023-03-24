@@ -4,3 +4,7 @@ Expected Result:    List activities
 
 Prompt:             There once was a child in Spain. Who loved to play in the rain. One day he tripped. And broke his hip.  
 Expected Result:    Continue the poem. Should rhime.
+
+
+text correction:
+Prompt:             My bicicle was broken his weel. His spped is not as fast no no longer.
