@@ -19,7 +19,7 @@ require("./GPT_API.js");
 
 const KEYITEM_NAME = "GPTAPI_Key";
 
-Office.onReady((info) => {
+Office.onReady(async (info) => {
   if (info.host === Office.HostType.Word) {
     document.getElementById("sideload-msg").style.display = "none";
     document.getElementById("app-body").style.display = "flex";
@@ -30,6 +30,8 @@ Office.onReady((info) => {
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
     document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
+
+    await verifyGPTKey();
   }
 });
 
@@ -210,6 +212,7 @@ export async function verifyGPTKey() {
       if (await set_key(chosen_key)) {
         console.log("Key is valid");
         keyValid = true;
+        document.getElementById("ApiKey").value = chosen_key;
       } else {
         console.log("Key is not valid");
       }
