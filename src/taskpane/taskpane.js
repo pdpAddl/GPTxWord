@@ -82,6 +82,8 @@ export async function addTextToSelection() {
 
       rangeSpace.font.superscript = false;
       await context.sync();
+    } else {
+      console.log("Key not verified");
     }
   });
 }
@@ -128,6 +130,8 @@ export async function correctSelection() {
       rangeSelected.insertComment("Original text:\n" + selectedText);
 
       await context.sync();
+    } else {
+      console.log("Key not verified");
     }
   });
 }
@@ -187,10 +191,9 @@ export async function removeGPTKey() {
 }
 
 export async function verifyGPTKey() {
+  var keyValid = false;
   await Word.run(async (context) => {
-
     var keyExists = await checkGPTKeyExists();
-    var keyValid = false;
 
     if (keyExists) {
       const properties = context.document.properties.customProperties;
@@ -214,8 +217,9 @@ export async function verifyGPTKey() {
       console.log("No key available");
     }
     setApiKeyStatusIcon(keyValid);
-    return keyValid;
+    await context.sync();
   });
+  return keyValid;
 }
 
 // return true/false if key exists
