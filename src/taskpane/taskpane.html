@@ -50,6 +50,13 @@
             <button class="btn" id="BtnAddText" type="button">Continue selected text</button>
             <br>
             <img id="ApiCallLoading" alt="Loading..." src="../../assets/load.gif" width="30" height="30" style="display: none;">
+
+            <br>
+            <button class="btn" id="BtnTranslate" type="button">Translate to</button>
+            <select name="LanguageTo" id="LanguageTo">
+                <option value="english">English</option>
+                <option value="german">Deutsch</option>
+            </select>
         </div>
 
         <!-- Tab Config -->
@@ -70,8 +77,8 @@
                 <label for="ApiLanguage">GPT Language:</label>
                 <select name="ApiLanguage" id="ApiLanguage">
                     <option value="auto">auto detect</option>
-                    <option value="german">Deutsch</option>
                     <option value="english">English</option>
+                    <option value="german">Deutsch</option>
                 </select>
             </div>
             <br>
