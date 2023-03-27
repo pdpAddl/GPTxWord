@@ -48,6 +48,7 @@
             <br>
             <button class="btn" id="BtnAddText" type="button">Continue selected text</button>
             <br>
+            <img id="ApiCallLoading" alt="Loading..." src="../../assets/load.gif" width="30" height="30" style="display: none;">
         </div>
 
         <!-- Tab Config -->
@@ -58,8 +59,9 @@
                 <button class="btn" id="BtnApiKeyConfirm">Apply</button>
                 <button class="btn" id="BtnApiKeyReset">Reset</button>
                 <button class="btn" id="BtnApiKeyVerify">Verify Key</button>
-                <img class="ApiKeyConfirmed" id="IconApiKeyVerified" alt="Key Confirmed" src="../../assets/checkmark-svgrepo-com.svg" width="30" height="30">
-                <img class="ApiKeyUnconfirmed" id="IconApiKeyFalse" alt="Key Unconfirmed" src="../../assets/cancel-svgrepo-com.svg" width="30" height="30">
+                <img class="ApiKeyConfirmed" id="IconApiKeyVerified" alt="Key Confirmed" src="../../assets/checkmark-svgrepo-com.svg" width="30" height="30" style="display: none;">
+                <img id="ApiKeyLoading" alt="Loading..." src="../../assets/load.gif" width="30" height="30" style="display: none;">
+                <img class="ApiKeyUnconfirmed" id="IconApiKeyFalse" alt="Key Unconfirmed" src="../../assets/cancel-svgrepo-com.svg" width="30" height="30" style="display: inline;">
             </div>
             <br>
             <!-- access: document.getElementById("ApiLanguage").value -->

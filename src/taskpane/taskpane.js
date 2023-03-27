@@ -28,8 +28,20 @@ Office.onReady((info) => {
 });
 
 function setApiKeyStatusIcon( makeVisible ) {
+  document.getElementById( "ApiKeyLoading" ).style.display = "none";
   document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
   document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
+}
+
+function setApiKeyStatusLoading()
+{
+  document.getElementById( "IconApiKeyVerified" ).style.display = "none";
+  document.getElementById( "IconApiKeyFalse" ).style.display = "none";
+  document.getElementById( "ApiKeyLoading" ).style.display = "inline";
+}
+
+function showApiCallLoadingGif( makeVisible ) {
+  document.getElementById( "ApiCallLoading" ).style.display = makeVisible ? "inline" : "none";
 }
 
 export async function addTextToSelection() {
@@ -41,6 +53,8 @@ export async function addTextToSelection() {
     var rangeSelected;
     var selectedText;
     var addedText;
+
+    showApiCallLoadingGif( true );
 
     await checkGPTKeyExists();
     await validateGPTKey();
@@ -67,6 +81,7 @@ export async function addTextToSelection() {
 
       await context.sync();
     }
+    showApiCallLoadingGif( false );
   });
 }
 
@@ -78,6 +93,8 @@ export async function correctSelection() {
 
     var rangeSelected;
     var correctedText, selectedText;
+
+    showApiCallLoadingGif( true );
 
     await checkGPTKeyExists();
     await validateGPTKey();
@@ -107,11 +124,13 @@ export async function correctSelection() {
 
       await context.sync();
     }
+    showApiCallLoadingGif( false );
   });
 }
 
 export async function addGPTKey() {
   return Word.run(async (context) => {
+    setApiKeyStatusLoading();
     var valid, newKey;
     context.document.properties.customProperties.load("items");
     await context.sync();
@@ -137,6 +156,7 @@ export async function addGPTKey() {
 
 export async function validateGPTKey() {
   return Word.run(async (context) => {
+    setApiKeyStatusLoading();
     keyValid = false;
     if (keyExists) {
       const properties = context.document.properties.customProperties;
