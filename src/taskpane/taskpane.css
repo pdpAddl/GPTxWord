@@ -79,6 +79,10 @@
    color: red;
  }
 
+ textarea {
+   resize: none;
+ }
+
 /* Microsoft */
  .ms-welcome__header {
     padding: 20px;

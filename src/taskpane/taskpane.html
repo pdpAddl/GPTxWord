@@ -57,6 +57,12 @@
                 <option value="english">English</option>
                 <option value="german">Deutsch</option>
             </select>
+
+            <br>
+            <br>
+            <textarea name="QuestionText" id="QuestionText" placeholder="Ask GPT a question" rows="3" cols="20"></textarea>
+            <button class="btn" id="btnQuestion" style="height: 3rem; position: absolute;">Ask GPT</button>
+            <textarea name="QuestionAnswer" id="QuestionAnswer" placeholder="GPT will answer here" rows="10" cols="31" readonly></textarea>
         </div>
 
         <!-- Tab Config -->
@@ -97,6 +103,8 @@
             </div>
         </div>
         
+        
+
         <!-- script to change Tabs-->
         <script>
             function changeTab( event, tabName ) {
