@@ -35,21 +35,20 @@ Office.onReady(async (info) => {
   }
 });
 
-function setApiKeyStatusIcon( makeVisible ) {
-  document.getElementById( "ApiKeyLoading" ).style.display = "none";
-  document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
-  document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
+function setApiKeyStatusIcon(makeVisible) {
+  document.getElementById("ApiKeyLoading").style.display = "none";
+  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "inline" : "none";
+  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "inline";
 }
 
-function setApiKeyStatusLoading()
-{
-  document.getElementById( "IconApiKeyVerified" ).style.display = "none";
-  document.getElementById( "IconApiKeyFalse" ).style.display = "none";
-  document.getElementById( "ApiKeyLoading" ).style.display = "inline";
+function setApiKeyStatusLoading() {
+  document.getElementById("IconApiKeyVerified").style.display = "none";
+  document.getElementById("IconApiKeyFalse").style.display = "none";
+  document.getElementById("ApiKeyLoading").style.display = "inline";
 }
 
-function showApiCallLoadingGif( makeVisible ) {
-  document.getElementById( "ApiCallLoading" ).style.display = makeVisible ? "inline" : "none";
+function showApiCallLoadingGif(makeVisible) {
+  document.getElementById("ApiCallLoading").style.display = makeVisible ? "inline" : "none";
 }
 
 export async function addTextToSelection() {
@@ -62,7 +61,7 @@ export async function addTextToSelection() {
     var selectedText;
     var generatedText, processedText;
 
-    showApiCallLoadingGif( true );
+    showApiCallLoadingGif(true);
 
     if (await verifyGPTKey()) {
       // Get Selected Range
@@ -96,7 +95,7 @@ export async function addTextToSelection() {
     } else {
       console.log("Key not verified");
     }
-    showApiCallLoadingGif( false );
+    showApiCallLoadingGif(false);
   });
 }
 
@@ -109,7 +108,7 @@ export async function correctSelection() {
     var rangeSelected;
     var correctedText, processedText, selectedText;
 
-    showApiCallLoadingGif( true );
+    showApiCallLoadingGif(true);
 
     await checkGPTKeyExists();
     await verifyGPTKey();
@@ -151,7 +150,7 @@ export async function correctSelection() {
     } else {
       console.log("Key not verified");
     }
-    showApiCallLoadingGif( false );
+    showApiCallLoadingGif(false);
   });
 }
 
