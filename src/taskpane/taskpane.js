@@ -33,10 +33,13 @@ Office.onReady((info) => {
   }
 });
 
-function setApiKeyStatusIcon( makeVisible ) {
+function setApiKeyStatus( makeVisible ) {
   document.getElementById( "ApiKeyLoading" ).style.display = "none";
   document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
   document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
+
+  // display warning text
+  document.getElementById( "WarningNoKey" ).style.display = makeVisible ? "none" : "inline";
 }
 
 function setApiKeyStatusLoading()
@@ -176,12 +179,12 @@ export async function addGPTKey() {
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
-      setApiKeyStatusIcon(true);
+      setApiKeyStatus(true);
       console.log("Key applied");
     } else {
       // Error message, wrong key
       console.log("Key denied");
-      setApiKeyStatusIcon(false);
+      setApiKeyStatus(false);
     }
 
     await context.sync();
@@ -203,7 +206,7 @@ export async function removeGPTKey() {
 
       await context.sync();
       console.log(context.document.properties.customProperties.items);
-      setApiKeyStatusIcon(false);
+      setApiKeyStatus(false);
     } else {
       console.log("No key to remove");
     }
@@ -237,7 +240,7 @@ export async function verifyGPTKey() {
     } else {
       console.log("No key available");
     }
-    setApiKeyStatusIcon(keyValid);
+    setApiKeyStatus(keyValid);
     await context.sync();
   });
   return keyValid;
