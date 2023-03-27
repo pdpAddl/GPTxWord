@@ -3,14 +3,20 @@
  * See LICENSE in the project root for license information.
  */
 
-import { key_validation, set_key, text_completion_Davinci, text_completion_GPT3, text_correction_Davinci, text_correction_GPT3 } from "./GPT_API.js";
+import {
+  key_validation,
+  set_key,
+  text_completion_Davinci,
+  text_completion_GPT3,
+  text_correction_Davinci,
+  text_correction_GPT3,
+} from "./GPT_API.js";
 
 /* global document, Office, Word */
 
 //require("./keyhandling.js");
 require("./GPT_API.js");
 
-var keyExists, keyValid;
 const KEYITEM_NAME = "GPTAPI_Key";
 
 Office.onReady((info) => {
@@ -23,7 +29,7 @@ Office.onReady((info) => {
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnApiKeyVerify").onclick = validateGPTKey;
+    document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
   }
 });
 
@@ -50,36 +56,48 @@ export async function addTextToSelection() {
      * Insert your Word code here
      */
 
-    var rangeSelected;
+    var rangeSelected, rangeSpace;
     var selectedText;
-    var addedText;
+    var generatedText, processedText;
 
     showApiCallLoadingGif( true );
 
-    await checkGPTKeyExists();
-    await validateGPTKey();
-
-    if (keyExists && keyValid) {
+    if (await verifyGPTKey()) {
       // Get Selected Range
       rangeSelected = context.document.getSelection();
 
       // Load selected string
       rangeSelected.load("text");
+      rangeSelected.load("font");
 
       // Wait until everything is synced
       await context.sync();
 
-      // extract string to variable for further processing
+      // Extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // TODO: Add Text via GPT API
-      addedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
+      // Add Text via GPT API
+      generatedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
+
+      // Process text to fit into the document
+      processedText = processTextToInsert(generatedText);
 
       // Insert string at the end of the selected area
-      rangeSelected.insertText(addedText, Word.InsertLocation.end);
+      rangeSelected.insertText(processedText, Word.InsertLocation.end);
+
+      // Insert footnote with the same font as the selected text
       rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
 
+      // Insert space at the end of the inserted text
+      rangeSpace = rangeSelected.insertText(" ", Word.InsertLocation.end);
+
+      rangeSpace.load("font");
       await context.sync();
+
+      rangeSpace.font.superscript = false;
+      await context.sync();
+    } else {
+      console.log("Key not verified");
     }
     showApiCallLoadingGif( false );
   });
@@ -92,14 +110,14 @@ export async function correctSelection() {
      */
 
     var rangeSelected;
-    var correctedText, selectedText;
+    var correctedText, processedText, selectedText;
 
     showApiCallLoadingGif( true );
 
     await checkGPTKeyExists();
-    await validateGPTKey();
+    await verifyGPTKey();
 
-    if (keyExists && keyValid) {
+    if (await verifyGPTKey()) {
       // Get Selected Range
       rangeSelected = context.document.getSelection();
 
@@ -112,21 +130,38 @@ export async function correctSelection() {
       // extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // Correct Text via GPT API - TODO
+      // Correct Text via GPT API
       correctedText = await text_correction_Davinci(selectedText);
 
       // Delete previous selected text
       rangeSelected.clear();
 
+      // Process text to fit into the document
+      processedText = processTextToInsert(correctedText);
+
       // Insert corrected text with foot note
-      rangeSelected.insertText(correctedText, Word.InsertLocation.start);
+      rangeSelected.insertText(processedText, Word.InsertLocation.start);
       rangeSelected.insertFootnote("This text was corrected by the GPT AI");
 
+      // Insert comment displaying original text
+      rangeSelected.insertComment("Original text:\n" + selectedText);
+
       await context.sync();
+    } else {
+      console.log("Key not verified");
     }
     showApiCallLoadingGif( false );
   });
 }
+
+// ----------------TEXT Alignment--------------------
+function processTextToInsert(text) {
+  // remove whitespaces
+  text = text.replace(/\s+/g, " ").trim();
+  return text;
+}
+
+// ------------------KEY--------------------------
 
 export async function addGPTKey() {
   return Word.run(async (context) => {
@@ -141,12 +176,12 @@ export async function addGPTKey() {
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
-      setApiKeyStatusIcon( true );
+      setApiKeyStatusIcon(true);
       console.log("Key applied");
     } else {
       // Error message, wrong key
       console.log("Key denied");
-      setApiKeyStatusIcon( false );
+      setApiKeyStatusIcon(false);
     }
 
     await context.sync();
@@ -154,10 +189,33 @@ export async function addGPTKey() {
   });
 }
 
-export async function validateGPTKey() {
+export async function removeGPTKey() {
   return Word.run(async (context) => {
     setApiKeyStatusLoading();
-    keyValid = false;
+    if (await checkGPTKeyExists()) {
+      const properties = context.document.properties.customProperties;
+
+      context.document.properties.customProperties.load("items");
+      await context.sync();
+
+      properties.getItem(KEYITEM_NAME).delete();
+      //gpt_key.delete();
+
+      await context.sync();
+      console.log(context.document.properties.customProperties.items);
+      setApiKeyStatusIcon(false);
+    } else {
+      console.log("No key to remove");
+    }
+  });
+}
+
+export async function verifyGPTKey() {
+  setApiKeyStatusLoading();
+  var keyValid = false;
+  await Word.run(async (context) => {
+    var keyExists = await checkGPTKeyExists();
+
     if (keyExists) {
       const properties = context.document.properties.customProperties;
 
@@ -179,43 +237,28 @@ export async function validateGPTKey() {
     } else {
       console.log("No key available");
     }
-    setApiKeyStatusIcon( keyValid );
+    setApiKeyStatusIcon(keyValid);
+    await context.sync();
   });
+  return keyValid;
 }
 
-export async function removeGPTKey() {
-  return Word.run(async (context) => {
-    checkGPTKeyExists().then(async function () {
-      if (keyExists) {
-        const properties = context.document.properties.customProperties;
-
-        context.document.properties.customProperties.load("items");
-        await context.sync();
-
-        properties.getItem(KEYITEM_NAME).delete();
-        //gpt_key.delete();
-
-        await context.sync();
-        console.log(context.document.properties.customProperties.items);
-        setApiKeyStatusIcon( false );
-      } else {
-        console.log("No key to remove");
-      }
-    });
-  });
-}
-
+// return true/false if key exists
 export async function checkGPTKeyExists() {
-  return Word.run(async (context) => {
+  var keyExists = false;
+  await Word.run(async (context) => {
     const properties = context.document.properties.customProperties;
 
     context.document.properties.customProperties.load("items");
     properties.load("key");
-
     await context.sync();
 
-    keyExists = false;
-    for (let i = 0; i < properties.items.length; i++) if (properties.items[i].key == KEYITEM_NAME) keyExists = true;
-    console.log(keyExists);
+    for (let i = 0; i < properties.items.length; i++) {
+      if (properties.items[i].key === KEYITEM_NAME) {
+        keyExists = true;
+        break;
+      }
+    }
   });
+  return keyExists;
 }
