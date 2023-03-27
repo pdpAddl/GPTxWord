@@ -35,9 +35,21 @@ Office.onReady(async (info) => {
   }
 });
 
-function setApiKeyStatusIcon(makeVisible) {
-  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "inline" : "none";
-  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "inline";
+function setApiKeyStatusIcon( makeVisible ) {
+  document.getElementById( "ApiKeyLoading" ).style.display = "none";
+  document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
+  document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
+}
+
+function setApiKeyStatusLoading()
+{
+  document.getElementById( "IconApiKeyVerified" ).style.display = "none";
+  document.getElementById( "IconApiKeyFalse" ).style.display = "none";
+  document.getElementById( "ApiKeyLoading" ).style.display = "inline";
+}
+
+function showApiCallLoadingGif( makeVisible ) {
+  document.getElementById( "ApiCallLoading" ).style.display = makeVisible ? "inline" : "none";
 }
 
 export async function addTextToSelection() {
@@ -49,6 +61,8 @@ export async function addTextToSelection() {
     var rangeSelected, rangeSpace;
     var selectedText;
     var generatedText, processedText;
+
+    showApiCallLoadingGif( true );
 
     if (await verifyGPTKey()) {
       // Get Selected Range
@@ -82,6 +96,7 @@ export async function addTextToSelection() {
     } else {
       console.log("Key not verified");
     }
+    showApiCallLoadingGif( false );
   });
 }
 
@@ -93,6 +108,8 @@ export async function correctSelection() {
 
     var rangeSelected;
     var correctedText, processedText, selectedText;
+
+    showApiCallLoadingGif( true );
 
     await checkGPTKeyExists();
     await verifyGPTKey();
@@ -134,6 +151,7 @@ export async function correctSelection() {
     } else {
       console.log("Key not verified");
     }
+    showApiCallLoadingGif( false );
   });
 }
 
@@ -157,6 +175,7 @@ async function insertSpace(range) {
 // ------------------KEY--------------------------
 export async function addGPTKey() {
   return Word.run(async (context) => {
+    setApiKeyStatusLoading();
     var valid, newKey;
     context.document.properties.customProperties.load("items");
     await context.sync();
@@ -182,6 +201,7 @@ export async function addGPTKey() {
 
 export async function removeGPTKey() {
   return Word.run(async (context) => {
+    setApiKeyStatusLoading();
     if (await checkGPTKeyExists()) {
       const properties = context.document.properties.customProperties;
 
@@ -201,6 +221,7 @@ export async function removeGPTKey() {
 }
 
 export async function verifyGPTKey() {
+  setApiKeyStatusLoading();
   var keyValid = false;
   await Word.run(async (context) => {
     var keyExists = await checkGPTKeyExists();

@@ -75,15 +75,7 @@
     background-color: rgb(28, 193, 86);
  }
 
- .ApiKeyConfirmed {
-   display: none;
- }
-
- .ApiKeyUnconfirmed {
-    display: inline;
- }
-
-
+/* Microsoft */
  .ms-welcome__header {
     padding: 20px;
     padding-bottom: 30px;
