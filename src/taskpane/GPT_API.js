@@ -1,15 +1,29 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-const GPTAPI_Commands_Automatic_Language = {Completion: `Complete this text and keep the original Language: `, Correction: `Correct Spelling and Grammar of the following Text and keep the original Language of the following text, if there are no mistakes return Original text: `,Translation: `Translate the following text to `  };
-const GPTAPI_Commands_English = {Completion: `Complete this text in english: `, Correction: `Correct Spelling and Grammar of the following Text in English, if there are no mistakes return Original text: `,Translation: `Translate the following text from english to `  };
-const GPTAPI_Commands_German  = {Completion: `Verfolständige diesen Text in Deutsch: `, Correction: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text: `,Translation:`Überstze den folgenden Text von Deutsch nach ` };
+const GPTAPI_Commands_Automatic_Language = {
+  Completion: `Complete this text and keep the original Language: `,
+  Correction: `Correct Spelling and Grammar of the following Text and keep the original Language of the following text, if there are no mistakes return Original text: `,
+  Translation: `Translate the following text to `,
+};
+const GPTAPI_Commands_English = {
+  Completion: `Complete this text in english: `,
+  Correction: `Correct Spelling and Grammar of the following Text in English, if there are no mistakes return Original text: `,
+  Translation: `Translate the following text from english to `,
+};
+const GPTAPI_Commands_German = {
+  Completion: `Verfolständige diesen Text in Deutsch: `,
+  Correction: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text: `,
+  Translation: `Überstze den folgenden Text von Deutsch nach `,
+};
 const GPTAPI_Commands_Role_System_English = "You are a helpful assistant.";
 const GPTAPI_Commands_Role_System_German = "Du bist ein Hilfsbereiter Assistent.";
 
 const configuration = new Configuration({
-  apiKey: key,
+  apiKey: null,
 });
 var currentOPENAIApi = new OpenAIApi(configuration);
+
+var request_template, assistant_behavior;
 
 //set_key(key);
 
@@ -48,7 +62,7 @@ export async function set_key(newKey) {
  * @param out{string}                           The text the GPTAI returned.
  */
 export async function text_completion_GPT3(text, language) {
-  switch(language){
+  switch (language) {
     case "english":
       request_template = GPTAPI_Commands_English.Completion;
       assistant_behavior = GPTAPI_Commands_Role_System_English;
@@ -64,9 +78,9 @@ export async function text_completion_GPT3(text, language) {
   }
 
   const response = await currentOPENAIApi.createChatCompletion({
-    model: "gpt-3.5-turbo", 
+    model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: assistant_behavior},
+      { role: "system", content: assistant_behavior },
       { role: "user", content: request_template + text },
     ],
   });
@@ -82,8 +96,8 @@ export async function text_completion_GPT3(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_completion_Davinci (text, language){
-  switch(language){
+export async function text_completion_Davinci(text, language) {
+  switch (language) {
     case "english":
       request_template = GPTAPI_Commands_English.Completion;
       break;
@@ -95,14 +109,13 @@ export async function text_completion_Davinci (text, language){
       break;
   }
   const response = await currentOPENAIApi.createCompletion({
-    model: "text-davinci-003",     
+    model: "text-davinci-003",
     prompt: request_template + text,
     temperature: 0,
     max_tokens: 100,
   });
 
-  console.log("Antwort: "+response.data.choices[0].text);
-  return  response.data.choices[0].text;
+  console.log("Antwort: " + response.data.choices[0].text);
   return response.data.choices[0].text;
 }
 
@@ -114,7 +127,7 @@ export async function text_completion_Davinci (text, language){
  * @param out{string}                           The text the GPTAI returned.
  */
 export async function text_correction_GPT3(text, language) {
-  switch(language){
+  switch (language) {
     case "english":
       request_template = GPTAPI_Commands_English.Correction;
       assistant_behavior = GPTAPI_Commands_Role_System_English;
@@ -132,8 +145,8 @@ export async function text_correction_GPT3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
-      { role: "system", content: assistant_behavior},
-      { role: "user", content: request_template + text},
+      { role: "system", content: assistant_behavior },
+      { role: "user", content: request_template + text },
     ],
   });
 
@@ -148,8 +161,8 @@ export async function text_correction_GPT3(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_correction_Davinci (text, language){
-  switch(language){
+export async function text_correction_Davinci(text, language) {
+  switch (language) {
     case "english":
       request_template = GPTAPI_Commands_English.Correction;
       break;
@@ -159,17 +172,17 @@ export async function text_correction_Davinci (text, language){
     case "automatic":
       request_template = GPTAPI_Commands_Automatic_Language.Correction;
       break;
-  }    
+  }
 
   const response = await currentOPENAIApi.createCompletion({
-    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    model: "text-davinci-003", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     prompt: request_template + text,
     temperature: 0,
     max_tokens: 100,
   });
 
-  console.log("Antwort: "+response.data.choices[0].text);
-  return  response.data.choices[0].text;
+  console.log("Antwort: " + response.data.choices[0].text);
+  return response.data.choices[0].text;
 }
 
 /**text_translation
@@ -181,41 +194,41 @@ export async function text_correction_Davinci (text, language){
  * @param out{string}                           The text the GPTAI returned.
  */
 export async function text_translation(text, originallanguage, resultLanguage) {
-  switch(originallanguage){
+  switch (originallanguage) {
     case "english":
-      request_template = GPTAPI_Commands_English.Translation + resultLanguage +":";
+      request_template = GPTAPI_Commands_English.Translation + resultLanguage + ":";
       assistant_behavior = GPTAPI_Commands_Role_System_English;
       break;
     case "german":
-      request_template = GPTAPI_Commands_German.Translation + resultLanguage +":";
+      request_template = GPTAPI_Commands_German.Translation + resultLanguage + ":";
       assistant_behavior = GPTAPI_Commands_Role_System_German;
       break;
     case "automatic":
-      request_template = GPTAPI_Commands_Automatic_Language.Translation + resultLanguage +":";
+      request_template = GPTAPI_Commands_Automatic_Language.Translation + resultLanguage + ":";
       assistant_behavior = GPTAPI_Commands_Role_System_English;
       break;
-  }    
+  }
 
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: assistant_behavior},
+      { role: "system", content: assistant_behavior },
       { role: "user", content: request_template + text },
     ],
   });
   console.log("Antwort: " + response.data.choices[0].message.content);
-  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+  return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 /**key_validation
- * Description.     A function to validate a key for the OpenAIAPI 
+ * Description.     A function to validate a key for the OpenAIAPI
  *                  (If given same text multiple times it returns different answers)
  * @param in {string}           API             API you want to validate
  * @param out{bool}                             True if Key is Valid, False if key is Invalid
  */
 export async function key_validation(API) {
   try {
-    const response = await API.createCompletion({
+    await API.createCompletion({
       model: "ada",
       prompt: "hi",
       max_tokens: 1,
@@ -230,17 +243,17 @@ export async function key_validation(API) {
 }
 
 /**Chatbot
- * Description.     A function to use the OpenAIAPI as Chatbot 
+ * Description.     A function to use the OpenAIAPI as Chatbot
  *                  (If given same text multiple times it returns different answers)
  * @param in {string}           request         API you want to validate
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function Chatbot(request){
+export async function Chatbot(request) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: "You are a helpful assistant"},
-      { role: "user", content: request},
+      { role: "system", content: "You are a helpful assistant" },
+      { role: "user", content: request },
     ],
   });
 
@@ -248,7 +261,7 @@ export async function Chatbot(request){
 }
 
 /**image_generation
- * Description.     A function to use the OpenAIAPI as Chatbot 
+ * Description.     A function to use the OpenAIAPI as Chatbot
  *                  (If given same text multiple times it returns different answers)
  * @param in {string}           description     Description of the Picture you want
  * @param out{string}                           Image URL
@@ -262,4 +275,3 @@ export async function image_generation(description) {
   var image_url = await response.data.data[0].url;
   console.log(image_url);
 }
-
