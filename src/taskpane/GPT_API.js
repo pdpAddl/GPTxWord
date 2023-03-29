@@ -193,7 +193,7 @@ export async function text_correction_Davinci(text, language) {
  * @param in {string}           resultLanguage  Language you want the result text in. All Languages are supported
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_translation(text, originallanguage, resultLanguage) {
+export async function text_translation_GPT3(text, originallanguage, resultLanguage) {
   switch (originallanguage) {
     case "english":
       request_template = GPTAPI_Commands_English.Translation + resultLanguage + ":";

@@ -10,7 +10,7 @@ import {
   text_completion_GPT3,
   text_correction_Davinci,
   text_correction_GPT3,
-  text_translation,
+  text_translation_GPT3,
 } from "./GPT_API.js";
 
 /* global document, Office, Word */
@@ -85,7 +85,16 @@ export async function addTextToSelection() {
       selectedText = rangeSelected.text;
 
       // Add Text via GPT API
-      generatedText = await text_completion_Davinci(selectedText, "automatic"); //.data.choices[0].message.content;
+      switch (document.getElementById("ApiModel").value) {
+        case "davinci":
+          generatedText = await text_completion_Davinci(selectedText, "automatic");
+          break;
+        case "gpt-3.5-turbo":
+          generatedText = await text_completion_GPT3(selectedText, "automatic");
+          break;
+        default:
+          console.log("No API Model selected");
+      }
 
       // Process text to fit into the document
       processedText = removeWhiteSpaces(generatedText);
@@ -134,7 +143,16 @@ export async function correctSelection() {
       selectedText = rangeSelected.text;
 
       // Correct Text via GPT API
-      correctedText = await text_correction_Davinci(selectedText, "automatic");
+      switch(document.getElementById("ApiModel").value) {
+        case "davinci":
+          correctedText = await text_correction_Davinci(selectedText, "automatic");
+          break;
+        case "gpt-3.5-turbo":
+          correctedText = await text_correction_GPT3(selectedText, "automatic");
+          break;
+        default:
+          console.log("No API Model selected");
+      }
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -185,8 +203,18 @@ export async function translateSelection() {
       // extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // Translate Text via GPT API
-      translatedText = await text_translation(selectedText, "automatic", document.getElementById("LanguageTo").value);
+      // Translate Text via GPT API depending on chosen model
+      switch(document.getElementById("ApiModel").value) {
+        case "davinci":
+          translatedText = await text_translation_GPT3(selectedText, "automatic", document.getElementById("LanguageTo").value);
+          break;
+        case "gpt-3.5-turbo":
+          translatedText = await text_translation_GPT3(selectedText, "automatic", document.getElementById("LanguageTo").value);
+          break;
+        default:
+          translatedText = await text_translation_GPT3(selectedText, "automatic", document.getElementById("LanguageTo").value);
+          break;
+      }
 
       // Delete previous selected text
       rangeSelected.clear();
