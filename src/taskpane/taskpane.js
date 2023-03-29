@@ -26,6 +26,7 @@ Office.onReady(async (info) => {
 
     document.getElementById("BtnAddText").onclick = addTextToSelection;
     document.getElementById("BtnCorrectText").onclick = correctSelection;
+    document.getElementById("BtnTranslate").onclick = translateSelection;
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
@@ -156,6 +157,56 @@ export async function correctSelection() {
     showApiCallLoadingGif(false);
   });
 }
+
+export async function translateSelection() {
+  return Word.run(async (context) => {
+    /**
+     * Insert your Word code here
+     */
+
+    var rangeSelected;
+    var translatedText, processedText, selectedText;
+
+    showApiCallLoadingGif( true );
+
+    if (await verifyGPTKey()) {
+      // Get Selected Range
+      rangeSelected = context.document.getSelection();
+
+      // Load selected string
+      rangeSelected.load("text");
+
+      // Wait until everything is synced
+      await context.sync();
+
+      // extract string to variable for further processing
+      selectedText = rangeSelected.text;
+
+      // Correct Text via GPT API - TO DO
+      // translatedText = await text_translation(selectedText);
+      translatedText = "This is a test";
+
+      // Delete previous selected text
+      rangeSelected.clear();
+
+      // Process text to fit into the document
+      processedText = removeWhiteSpaces(translatedText);
+
+      // Insert corrected text with foot note
+      rangeSelected.insertText(processedText, Word.InsertLocation.start);
+      rangeSelected.insertFootnote("This text was translated by the GPT AI");
+
+      // Insert comment displaying original text
+      rangeSelected.insertComment("Original text:\n" + selectedText);
+
+      await context.sync();
+    } else {
+      console.log("Key not verified");
+    }
+    showApiCallLoadingGif( false );
+  });
+}
+
 
 // ----------------TEXT-ALIGNMENT--------------------
 function removeWhiteSpaces(text) {
