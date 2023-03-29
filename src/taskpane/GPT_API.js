@@ -1,6 +1,10 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-var key;
+const GPTAPI_Commands_Automatic_Language = {Completion: `Complete this text and keep the original Language: `, Correction: `Correct Spelling and Grammar of the following Text and keep the original Language of the following text, if there are no mistakes return Original text: `,Translation: `Translate the following text to `  };
+const GPTAPI_Commands_English = {Completion: `Complete this text in english: `, Correction: `Correct Spelling and Grammar of the following Text in English, if there are no mistakes return Original text: `,Translation: `Translate the following text from english to `  };
+const GPTAPI_Commands_German  = {Completion: `Verfolständige diesen Text in Deutsch: `, Correction: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text: `,Translation:`Überstze den folgenden Text von Deutsch nach ` };
+const GPTAPI_Commands_Role_System_English = "You are a helpful assistant.";
+const GPTAPI_Commands_Role_System_German = "Du bist ein Hilfsbereiter Assistent.";
 
 const configuration = new Configuration({
   apiKey: key,
@@ -9,6 +13,12 @@ var currentOPENAIApi = new OpenAIApi(configuration);
 
 //set_key(key);
 
+/**set_key
+ * Description.     A function to set a key for the OpenAIAPI and verify it
+ *                  (If given same text multiple times it returns different answers)
+ * @param in {string}           newKey          Key you want to validate
+ * @param out{bool}                             True if Key is Valid, False if key is Invalid
+ */
 export async function set_key(newKey) {
   var OldOpenAIApi = currentOPENAIApi;
   var NewConfiguration = new Configuration({
@@ -30,61 +40,130 @@ export async function set_key(newKey) {
 
 // const openai = new OpenAIApi(configuration);
 
-export async function text_completion_GPT3(text) {
+/**text_completion_GPT3
+ * Description.     A function to let the GPT3.5 API from OpenAI complete a given text
+ *                  (If given same text multiple times it returns different answers)
+ * @param in {string}           text            Text you want the GPTAI to complete
+ * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
+ * @param out{string}                           The text the GPTAI returned.
+ */
+export async function text_completion_GPT3(text, language) {
+  switch(language){
+    case "english":
+      request_template = GPTAPI_Commands_English.Completion;
+      assistant_behavior = GPTAPI_Commands_Role_System_English;
+      break;
+    case "german":
+      request_template = GPTAPI_Commands_German.Completion;
+      assistant_behavior = GPTAPI_Commands_Role_System_German;
+      break;
+    case "automatic":
+      request_template = GPTAPI_Commands_Automatic_Language.Completion;
+      assistant_behavior = GPTAPI_Commands_Role_System_English;
+      break;
+  }
+
   const response = await currentOPENAIApi.createChatCompletion({
-    model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    model: "gpt-3.5-turbo", 
     messages: [
-      { role: "system", content: "du antwortest sachlich" },
-      { role: "user", content: "Complete this text and keep the original Language: " + text },
+      { role: "system", content: assistant_behavior},
+      { role: "user", content: request_template + text },
     ],
   });
 
-  // console.log("Anfrage: Complete this Text and keep the original Language: "+ text)
   console.log("Antwort: " + response.data.choices[0].message.content);
-  // console.log("Anfrage ID: "+response.data.id);
-  // console.log("Tokens für Anfrage: "+response.data.usage.prompt_tokens);
-  // console.log("Tokens für Antwort: "+response.data.usage.completion_tokens);
-  // console.log("Insgesamt verwendete Token: "+response.data.usage.total_tokens);
-
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-export async function text_completion_Davinci (text){
+/**text_completion_Davinci
+ * Description.     A function to let the Davinci API from OpenAI complete a given text
+ *                  (If given same text multiple times it returns the same answer)
+ * @param in {string}           text            Text you want the GPTAI to complete
+ * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
+ * @param out{string}                           The text the GPTAI returned.
+ */
+export async function text_completion_Davinci (text, language){
+  switch(language){
+    case "english":
+      request_template = GPTAPI_Commands_English.Completion;
+      break;
+    case "german":
+      request_template = GPTAPI_Commands_German.Completion;
+      break;
+    case "automatic":
+      request_template = GPTAPI_Commands_Automatic_Language.Completion;
+      break;
+  }
   const response = await currentOPENAIApi.createCompletion({
-    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
-    prompt: "Complete this text and keep the original language: " + text,
+    model: "text-davinci-003",     
+    prompt: request_template + text,
     temperature: 0,
     max_tokens: 100,
   });
 
   console.log("Antwort: "+response.data.choices[0].text);
+  return  response.data.choices[0].text;
   return response.data.choices[0].text;
 }
 
-export async function text_correction_GPT3(text) {
+/**text_correction_GPT3
+ * Description.     A function to let the Davinci API from OpenAI correct a given text
+ *                  (If given same text multiple times it returns the same answer)
+ * @param in {string}           text            Text you want the GPTAI to correct
+ * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
+ * @param out{string}                           The text the GPTAI returned.
+ */
+export async function text_correction_GPT3(text, language) {
+  switch(language){
+    case "english":
+      request_template = GPTAPI_Commands_English.Correction;
+      assistant_behavior = GPTAPI_Commands_Role_System_English;
+      break;
+    case "german":
+      request_template = GPTAPI_Commands_German.Correction;
+      assistant_behavior = GPTAPI_Commands_Role_System_German;
+      break;
+    case "automatic":
+      request_template = GPTAPI_Commands_Automatic_Language.Correction;
+      assistant_behavior = GPTAPI_Commands_Role_System_English;
+      break;
+  }
+
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
-      { role: "system", content: "du antwortest sachlich" },
-      { role: "user", content: "Correct Spelling and Grammar of the following Text and keep the original Languageof the following text: " + text },
+      { role: "system", content: assistant_behavior},
+      { role: "user", content: request_template + text},
     ],
   });
 
-  /*  console.log("Anfrage: Correct Spelling and Grammar of the following Text and keep the original Language: " + text);*/
   console.log("Antwort: " + response.data.choices[0].message.content);
-  /* console.log("Anfrage ID: " + response.data.id);
-  console.log("Tokens für Anfrage: " + response.data.usage.prompt_tokens);
-  console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
-  console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
-  console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");*/
-
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
-export async function text_correction_Davinci (text){
+/**text_correction_Davinci
+ * Description.     A function to let the Davinci API from OpenAI correct a given text
+ *                  (If given same text multiple times it returns the same answer)
+ * @param in {string}           text            Text you want the GPTAI to correct
+ * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
+ * @param out{string}                           The text the GPTAI returned.
+ */
+export async function text_correction_Davinci (text, language){
+  switch(language){
+    case "english":
+      request_template = GPTAPI_Commands_English.Correction;
+      break;
+    case "german":
+      request_template = GPTAPI_Commands_German.Correction;
+      break;
+    case "automatic":
+      request_template = GPTAPI_Commands_Automatic_Language.Correction;
+      break;
+  }    
+
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
-    prompt: "Correct Spelling and Grammar of the following text and keep the original Language of the following text: " + text,
+    prompt: request_template + text,
     temperature: 0,
     max_tokens: 100,
   });
@@ -93,26 +172,47 @@ export async function text_correction_Davinci (text){
   return  response.data.choices[0].text;
 }
 
-export async function text_translation(text, Language) {
+/**text_translation
+ * Description.     A function to let the Davinci API from OpenAI translate a given text
+ *                  (If given same text multiple times it returns the same answer)
+ * @param in {string}           text            Text you want the GPTAI to translate
+ * @param in {string}           originallanguageLanguage in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
+ * @param in {string}           resultLanguage  Language you want the result text in. All Languages are supported
+ * @param out{string}                           The text the GPTAI returned.
+ */
+export async function text_translation(text, originallanguage, resultLanguage) {
+  switch(originallanguage){
+    case "english":
+      request_template = GPTAPI_Commands_English.Translation + resultLanguage +":";
+      assistant_behavior = GPTAPI_Commands_Role_System_English;
+      break;
+    case "german":
+      request_template = GPTAPI_Commands_German.Translation + resultLanguage +":";
+      assistant_behavior = GPTAPI_Commands_Role_System_German;
+      break;
+    case "automatic":
+      request_template = GPTAPI_Commands_Automatic_Language.Translation + resultLanguage +":";
+      assistant_behavior = GPTAPI_Commands_Role_System_English;
+      break;
+  }    
+
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: "You are a helpful assistant that translates to" + Language },
-      { role: "user", content: "Translate the following text to" + Language + ": " + text },
+      { role: "system", content: assistant_behavior},
+      { role: "user", content: request_template + text },
     ],
   });
-
-  //console.log("Anfrage: Correct Spelling and Grammar of the following Text and keep the original Language: " + text);
   console.log("Antwort: " + response.data.choices[0].message.content);
-  //console.log("Anfrage ID: " + response.data.id);
-  //console.log("Tokens für Anfrage: " + response.data.usage.prompt_tokens);
-  //console.log("Tokens für Antwort: " + response.data.usage.completion_tokens);
-  //console.log("Insgesamt verwendete Token: " + response.data.usage.total_tokens);
-  //console.log("Kosten: " + ((response.data.usage.total_tokens / 1000) * 0, 2) + " cent");
-
   return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
+/**key_validation
+ * Description.     A function to validate a key for the OpenAIAPI 
+ *                  (If given same text multiple times it returns different answers)
+ * @param in {string}           API             API you want to validate
+ * @param out{bool}                             True if Key is Valid, False if key is Invalid
+ */
 export async function key_validation(API) {
   try {
     const response = await API.createCompletion({
@@ -129,6 +229,30 @@ export async function key_validation(API) {
   }
 }
 
+/**Chatbot
+ * Description.     A function to use the OpenAIAPI as Chatbot 
+ *                  (If given same text multiple times it returns different answers)
+ * @param in {string}           request         API you want to validate
+ * @param out{string}                           The text the GPTAI returned.
+ */
+export async function Chatbot(request){
+  const response = await currentOPENAIApi.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "You are a helpful assistant"},
+      { role: "user", content: request},
+    ],
+  });
+
+  return response.data.choices[0].message.content;
+}
+
+/**image_generation
+ * Description.     A function to use the OpenAIAPI as Chatbot 
+ *                  (If given same text multiple times it returns different answers)
+ * @param in {string}           description     Description of the Picture you want
+ * @param out{string}                           Image URL
+ */
 export async function image_generation(description) {
   const response = await currentOPENAIApi.createImage({
     prompt: description,
@@ -139,19 +263,3 @@ export async function image_generation(description) {
   console.log(image_url);
 }
 
-//TextMitFehlern = "falls du bis morgen noch Zeit/Lust hast köntest du eventül noch ne Funktion implementieren, in der der API Key angewandt/überschrieben wird. ";
-//TextZumFortführen = "George washington war der";
-
-//set_key(key);
-
-//text_completion_Davinci(TextZumFortführen);
-
-//text_completion_GPT3(TextZumFortführen);
-
-//text_correction_Davinci(TextMitFehlern);
-
-//text_correction_GPT3(TextMitFehlern);
-
-//text_translation(TEXT1,"deutsch")
-//key_validation();
-//image_generation(null);
