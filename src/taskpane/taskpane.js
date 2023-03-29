@@ -5,7 +5,6 @@
 
 import {
   Chatbot,
-  key_validation,
   set_key,
   text_completion_Davinci,
   text_completion_GPT3,
@@ -65,7 +64,7 @@ export async function addTextToSelection() {
      * Insert your Word code here
      */
 
-    var rangeSelected, rangeSpace;
+    var rangeSelected;
     var selectedText;
     var generatedText, processedText;
 
@@ -186,8 +185,9 @@ export async function translateSelection() {
       // extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // TO DO: Add GPT API call to get an answer
+      // Translate Text via GPT API
       translatedText = await text_translation(selectedText, "automatic", document.getElementById("LanguageTo").value);
+
       // Delete previous selected text
       rangeSelected.clear();
 
@@ -214,7 +214,7 @@ export async function answerQuestion() {
 
   question = document.getElementById("QuestionText").value;
 
-  // TO DO: Add GPT API call to get an answer
+  // Answer Question via GPT API
   answer = await Chatbot(question);
 
   document.getElementById("QuestionAnswer").value = answer;
