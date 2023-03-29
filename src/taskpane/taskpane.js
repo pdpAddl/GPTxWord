@@ -28,6 +28,8 @@ Office.onReady(async (info) => {
     document.getElementById("BtnCorrectText").onclick = correctSelection;
     document.getElementById("BtnTranslate").onclick = translateSelection;
 
+    document.getElementById("btnQuestion").onclick = answerQuestion;
+
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
     document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
@@ -36,13 +38,13 @@ Office.onReady(async (info) => {
   }
 });
 
-function setApiKeyStatus( makeVisible ) {
-  document.getElementById( "ApiKeyLoading" ).style.display = "none";
-  document.getElementById( "IconApiKeyVerified" ).style.display = makeVisible ? "inline" : "none";
-  document.getElementById( "IconApiKeyFalse" ).style.display = makeVisible ? "none" : "inline";
+function setApiKeyStatus(makeVisible) {
+  document.getElementById("ApiKeyLoading").style.display = "none";
+  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "inline" : "none";
+  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "inline";
 
   // display warning text
-  document.getElementById( "WarningNoKey" ).style.display = makeVisible ? "none" : "inline";
+  document.getElementById("WarningNoKey").style.display = makeVisible ? "none" : "inline";
 }
 
 function setApiKeyStatusLoading() {
@@ -167,7 +169,7 @@ export async function translateSelection() {
     var rangeSelected;
     var translatedText, processedText, selectedText;
 
-    showApiCallLoadingGif( true );
+    showApiCallLoadingGif(true);
 
     if (await verifyGPTKey()) {
       // Get Selected Range
@@ -182,7 +184,7 @@ export async function translateSelection() {
       // extract string to variable for further processing
       selectedText = rangeSelected.text;
 
-      // Correct Text via GPT API - TO DO
+      // TO DO: Add GPT API call to get an answer
       // translatedText = await text_translation(selectedText);
       translatedText = "This is a test";
 
@@ -203,10 +205,20 @@ export async function translateSelection() {
     } else {
       console.log("Key not verified");
     }
-    showApiCallLoadingGif( false );
+    showApiCallLoadingGif(false);
   });
 }
 
+export async function answerQuestion() {
+  var question, answer;
+
+  question = document.getElementById("QuestionText").value;
+
+  // TO DO: Add GPT API call to get an answer
+  answer = "test";
+
+  document.getElementById("QuestionAnswer").value = answer;
+}
 
 // ----------------TEXT-ALIGNMENT--------------------
 function removeWhiteSpaces(text) {
