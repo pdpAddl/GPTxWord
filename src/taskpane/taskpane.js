@@ -4,12 +4,14 @@
  */
 
 import {
+  Chatbot,
   key_validation,
   set_key,
   text_completion_Davinci,
   text_completion_GPT3,
   text_correction_Davinci,
   text_correction_GPT3,
+  text_translation,
 } from "./GPT_API.js";
 
 /* global document, Office, Word */
@@ -84,7 +86,7 @@ export async function addTextToSelection() {
       selectedText = rangeSelected.text;
 
       // Add Text via GPT API
-      generatedText = await text_completion_Davinci(selectedText); //.data.choices[0].message.content;
+      generatedText = await text_completion_Davinci(selectedText, "automatic"); //.data.choices[0].message.content;
 
       // Process text to fit into the document
       processedText = removeWhiteSpaces(generatedText);
@@ -133,7 +135,7 @@ export async function correctSelection() {
       selectedText = rangeSelected.text;
 
       // Correct Text via GPT API
-      correctedText = await text_correction_Davinci(selectedText);
+      correctedText = await text_correction_Davinci(selectedText, "automatic");
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -185,9 +187,7 @@ export async function translateSelection() {
       selectedText = rangeSelected.text;
 
       // TO DO: Add GPT API call to get an answer
-      // translatedText = await text_translation(selectedText);
-      translatedText = "This is a test";
-
+      translatedText = await text_translation(selectedText, "automatic", document.getElementById("LanguageTo").value);
       // Delete previous selected text
       rangeSelected.clear();
 
@@ -215,7 +215,7 @@ export async function answerQuestion() {
   question = document.getElementById("QuestionText").value;
 
   // TO DO: Add GPT API call to get an answer
-  answer = "test";
+  answer = await Chatbot(question);
 
   document.getElementById("QuestionAnswer").value = answer;
 }
