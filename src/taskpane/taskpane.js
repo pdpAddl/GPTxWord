@@ -5,6 +5,7 @@
 
 import {
   Chatbot,
+  image_generation,
   set_key,
   text_completion_Davinci,
   text_completion_GPT3,
@@ -17,8 +18,12 @@ import {
 
 //require("./keyhandling.js");
 require("./GPT_API.js");
+//require(fetch);
 
 const KEYITEM_NAME = "GPTAPI_Key";
+
+const GPT_MODEL_DAVINCI = "davinci";
+const GPT_MODEL_GPT3_5_TURBO = "gpt-3.5-turbo";
 
 Office.onReady(async (info) => {
   if (info.host === Office.HostType.Word) {
@@ -30,6 +35,7 @@ Office.onReady(async (info) => {
     document.getElementById("BtnTranslate").onclick = translateSelection;
 
     document.getElementById("btnQuestion").onclick = answerQuestion;
+    document.getElementById("btnQuestion").onclick = generateImageFromSelection;
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
@@ -57,6 +63,8 @@ function setApiKeyStatusLoading() {
 function showApiCallLoadingGif(makeVisible) {
   document.getElementById("ApiCallLoading").style.display = makeVisible ? "inline" : "none";
 }
+
+// --------------------- Selected Text Conversion ---------------------
 
 export async function addTextToSelection() {
   return Word.run(async (context) => {
@@ -86,10 +94,10 @@ export async function addTextToSelection() {
 
       // Add Text via GPT API
       switch (document.getElementById("ApiModel").value) {
-        case "davinci":
+        case GPT_MODEL_DAVINCI:
           generatedText = await text_completion_Davinci(selectedText, "automatic");
           break;
-        case "gpt-3.5-turbo":
+        case GPT_MODEL_GPT3_5_TURBO:
           generatedText = await text_completion_GPT3(selectedText, "automatic");
           break;
         default:
@@ -144,10 +152,10 @@ export async function correctSelection() {
 
       // Correct Text via GPT API
       switch (document.getElementById("ApiModel").value) {
-        case "davinci":
+        case GPT_MODEL_DAVINCI:
           correctedText = await text_correction_Davinci(selectedText, "automatic");
           break;
-        case "gpt-3.5-turbo":
+        case GPT_MODEL_GPT3_5_TURBO:
           correctedText = await text_correction_GPT3(selectedText, "automatic");
           break;
         default:
@@ -208,14 +216,14 @@ export async function translateSelection() {
 
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
-        case "davinci":
+        case GPT_MODEL_DAVINCI:
           translatedText = await text_translation_GPT3(
             selectedText,
             "automatic",
             document.getElementById("LanguageTo").value
           );
           break;
-        case "gpt-3.5-turbo":
+        case GPT_MODEL_GPT3_5_TURBO:
           translatedText = await text_translation_GPT3(
             selectedText,
             "automatic",
@@ -238,12 +246,13 @@ export async function translateSelection() {
       processedText = removeWhiteSpaces(translatedText);
 
       // Insert corrected text with foot note
-      rangeSelected.insertText(processedText, Word.InsertLocation.start);
+      rangeSelected.insertText(processedText, Word.InsertLocation.end);
+      await context.sync();
       rangeSelected.insertFootnote("This text was translated by the GPT AI");
+      await context.sync();
 
       // Insert comment displaying original text
       rangeSelected.insertComment("Original text:\n" + selectedText);
-
       await context.sync();
     } else {
       console.log("Key not verified");
@@ -251,6 +260,93 @@ export async function translateSelection() {
     showApiCallLoadingGif(false);
   });
 }
+
+export async function generateImageFromSelection() {
+  if (Office.context.requirements.isSetSupported("WordApi", "1.2")) {
+    Word.run(async (context) => {
+      var rangeSelected;
+      var imageURL, selectedText;
+
+      showApiCallLoadingGif(true);
+
+      if (await verifyGPTKey()) {
+        // Get Selected Range
+        rangeSelected = context.document.getSelection();
+
+        // Load selected string
+        rangeSelected.load("text");
+
+        // Wait until everything is synced
+        await context.sync();
+
+        // extract string to variable for further processing
+        selectedText = rangeSelected.text;
+
+        //Generate Image via GPT API depending on chosen model
+        // switch (document.getElementById("ApiModel").value) {
+        //   case GPT_MODEL_DAVINCI:
+        //     imageURL = await image_generation(selectedText);
+        //     break;
+        //   case GPT_MODEL_GPT3_5_TURBO:
+        //     imageURL = await image_generation(selectedText);
+        //     break;
+        //   default:
+        //     imageURL = await image_generation(selectedText);
+        //     break;
+        // }
+
+        // eslint-disable-next-line no-undef
+        var base64Image;
+        //imageURL = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-SjySFVsK7RJxHGjrVtHMwBCI/user-pqXuCE4LoJoByePxOs6VNTx0/img-ewHVIZF3mQCVUqwlLVEOPD2y.png?st=2023-03-31T16%3A58%3A44Z&se=2023-03-31T18%3A58%3A44Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-30T18%3A04%3A48Z&ske=2023-03-31T18%3A04%3A48Z&sks=b&skv=2021-08-06&sig=mPj58eB3XQ0sJ1GbyJlJ5k8kEu52jKtsj91FEXRB4KY%3D";
+        imageURL =
+         "https://images.unsplash.com/photo-1661956600684-97d3a4320e45?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
+        // fetch(imageURL)
+        //   .then(function (response) {
+        //     return response.blob();
+        //   })
+        //   .then(function (blob) {
+        //     return blobToBase64(blob);
+        //   })
+        //   .then(function (base64) {
+        //     base64Image = trimBase64(base64);
+        //     return base64Image;
+        //   });
+        var response = await fetch(imageURL);
+        var blob = await response.blob();
+        base64Image = await blobToBase64(blob);
+        base64Image = trimBase64(base64Image);
+
+        // Insert Image
+        rangeSelected.insertInlinePictureFromBase64(base64Image, "End");
+        await context.sync();
+
+        // Insert Image
+      } else {
+        console.log("Key not verified");
+      }
+
+      showApiCallLoadingGif(false);
+    });
+  } else {
+    //if you reach this code it means that the Word executing this code does not yet support the 1.2 requirement set. in this case you can also insert a paragraph and then insert the document on the paragraph.
+
+    console.log("Error. This functionality requires Word with at least January update!! (check  builds 6568+)");
+  }
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+function trimBase64(base64) {
+  return base64.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+}
+
+// ------------------CHATBOT-----------------------
 
 export async function answerQuestion() {
   var question, answer;
@@ -264,6 +360,7 @@ export async function answerQuestion() {
 }
 
 // ----------------TEXT-ALIGNMENT--------------------
+
 function removeWhiteSpaces(text) {
   text = text.replace(/\s+/g, " ").trim();
   return text;
@@ -329,6 +426,7 @@ export async function removeGPTKey() {
 }
 
 export async function verifyGPTKey() {
+  return true;
   setApiKeyStatusLoading();
   var keyValid = false;
   await Word.run(async (context) => {
