@@ -12,11 +12,12 @@ const GPTAPI_Commands_English = {
 };
 const GPTAPI_Commands_German = {
   Completion: `Verfolständige diesen Text in Deutsch: `,
-  Correction: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text: `,
+  Correction: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text, falls keine Fehler vorhanden sind, gib den Originaltext zurück: `,
   Translation: `Überstze den folgenden Text von Deutsch nach `,
 };
-const GPTAPI_Commands_Role_System_English = "You are a helpful assistant.";
-const GPTAPI_Commands_Role_System_German = "Du bist ein Hilfsbereiter Assistent.";
+const GPTAPI_Commands_Role_System_English = "You are a helpful assistant and dont do Notes.";
+const GPTAPI_Commands_Role_System_German = "Du bist ein Hilfsbereiter Assistent und machts keine Kommentare.";
+
 
 const configuration = new Configuration({
   apiKey: null,
