@@ -33,7 +33,6 @@ Office.onReady(async (info) => {
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
 
     await verifyGPTKey();
   }
