@@ -38,7 +38,6 @@ Office.onReady(async (info) => {
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
 
     await verifyGPTKey();
   }
@@ -46,17 +45,17 @@ Office.onReady(async (info) => {
 
 function setApiKeyStatus(makeVisible) {
   document.getElementById("ApiKeyLoading").style.display = "none";
-  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "inline" : "none";
-  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "inline";
+  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "grid" : "none";
+  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "grid";
 
   // display warning text
-  document.getElementById("WarningNoKey").style.display = makeVisible ? "none" : "inline";
+  document.getElementById("ErrorMessage").style.display = makeVisible ? "none" : "inline";
 }
 
 function setApiKeyStatusLoading() {
   document.getElementById("IconApiKeyVerified").style.display = "none";
   document.getElementById("IconApiKeyFalse").style.display = "none";
-  document.getElementById("ApiKeyLoading").style.display = "inline";
+  document.getElementById("ApiKeyLoading").style.display = "grid";
 }
 
 function showApiCallLoadingGif(makeVisible) {
@@ -350,6 +349,7 @@ function trimBase64(base64) {
 // ------------------CHATBOT-----------------------
 
 export async function answerQuestion() {
+  showApiCallLoadingGif(true);
   var question, answer;
 
   question = document.getElementById("QuestionText").value;
@@ -358,6 +358,7 @@ export async function answerQuestion() {
   answer = await Chatbot(question);
 
   document.getElementById("QuestionAnswer").value = answer;
+  showApiCallLoadingGif(false);
 }
 
 // ----------------TEXT-ALIGNMENT--------------------
