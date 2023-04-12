@@ -8,3 +8,6 @@ Expected Result:    Continue the poem. Should rhime.
 
 text correction:
 Prompt:             My bicicle was broken his weel. His spped is not as fast no no longer.
+
+text summary:
+Prompt:             https://sinnblock.de/wp-content/uploads/2021/01/Steine-im-Wasser.pdf

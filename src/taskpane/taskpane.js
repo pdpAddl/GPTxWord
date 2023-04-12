@@ -13,6 +13,8 @@ import {
   text_correction_GPT3,
   text_translation,
   SupportedLanguages,
+  textSummaryDavinci,
+  textSummaryGpt3,
 } from "./GPT_API.js";
 
 /* global document, Office, Word */
@@ -34,6 +36,7 @@ Office.onReady(async (info) => {
     document.getElementById("BtnAddText").onclick = addTextToSelection;
     document.getElementById("BtnCorrectText").onclick = correctSelection;
     document.getElementById("BtnTranslate").onclick = translateSelection;
+    document.getElementById("BtnSummarizeText").onclick = summarizeSelection;
 
     document.getElementById("btnQuestion").onclick = answerQuestion;
 
@@ -261,6 +264,75 @@ export async function translateSelection() {
     showApiCallLoadingGif(false);
   });
 }
+
+export async function summarizeSelection() {
+  Word.run(async (context) => {
+
+    var rangeSelected;
+    var summarizedText, processedText, selectedText;
+    //Summarize selected text
+    showApiCallLoadingGif(true);
+
+    if (await verifyGPTKey()) {
+      // Get Selected Range
+      rangeSelected = context.document.getSelection();
+
+      // Load selected string
+      rangeSelected.load("text");
+
+      // Wait until everything is synced
+      await context.sync();
+
+      // extract string to variable for further processing
+      selectedText = rangeSelected.text;
+
+      // Translate Text via GPT API depending on chosen model
+      switch (document.getElementById("ApiModel").value) {
+        case GPT_MODEL_DAVINCI:
+          summarizedText = await textSummaryDavinci(
+            selectedText,
+            "Automatic",
+            document.getElementById("LanguageTo").value
+          );
+          break;
+        case GPT_MODEL_GPT3_5_TURBO:
+          summarizedText = await textSummaryGpt3(
+            selectedText,
+            "Automatic",
+            document.getElementById("LanguageTo").value
+          );
+          break;
+        default:
+          summarizedText = await textSummaryDavinci(
+            selectedText,
+            "Automatic",
+            document.getElementById("LanguageTo").value
+          );
+          break;
+      }
+
+      // Delete previous selected text
+      rangeSelected.clear();
+
+      // Process text to fit into the document
+      processedText = removeWhiteSpaces(summarizedText);
+
+      // Insert corrected text with foot note
+      rangeSelected.insertText(processedText, Word.InsertLocation.end);
+      await context.sync();
+      rangeSelected.insertFootnote("This text was summarized by the GPT AI");
+      await context.sync();
+
+      // Insert comment displaying original text
+      rangeSelected.insertComment("Original text:\n" + selectedText);
+      await context.sync();
+    } else {
+      console.log("Key not verified");
+    }
+    showApiCallLoadingGif(false);
+  });
+}
+
 
 // export async function generateImageFromSelection() {
 //   if (Office.context.requirements.isSetSupported("WordApi", "1.2")) {

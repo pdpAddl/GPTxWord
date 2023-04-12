@@ -205,7 +205,7 @@ export async function textSummaryGpt3(text, language) {
     ],
   });
   console.log(response.data.choices[0].message.content);
- return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+  return response.data.choices[0].message.content;
 
 }
 
@@ -219,7 +219,7 @@ export async function textSummaryDavinci (text, language){
   });
 
   console.log(response.data.choices[0].text);
-  return  response;
+  return response.data.choices[0].message.content;
 }
 
 
@@ -262,7 +262,7 @@ export async function rewriteTextDavinci (text, language, TextStyle){
   });
 
   console.log(response.data.choices[0].text);
-  return  response;
+  return response.data.choices[0].text;
 }
 
 /**key_validation
