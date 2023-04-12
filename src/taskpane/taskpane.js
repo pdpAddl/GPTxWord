@@ -252,6 +252,7 @@ export async function translateSelection() {
 }
 
 export async function answerQuestion() {
+  showApiCallLoadingGif(true);
   var question, answer;
 
   question = document.getElementById("QuestionText").value;
@@ -260,6 +261,7 @@ export async function answerQuestion() {
   answer = await Chatbot(question);
 
   document.getElementById("QuestionAnswer").value = answer;
+  showApiCallLoadingGif(false);
 }
 
 // ----------------TEXT-ALIGNMENT--------------------
