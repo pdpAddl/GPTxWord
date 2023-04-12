@@ -2,27 +2,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
  * See LICENSE in the project root for license information.
  */
-
-import {
-  Chatbot,
-  image_generation,
-  set_key,
-  text_completion_Davinci,
-  text_completion_GPT3,
-  text_correction_Davinci,
-  text_correction_GPT3,
-  text_translation,
-  SupportedLanguages,
-  textSummaryDavinci,
-  textSummaryGpt3,
-  rewriteTextDavinci,
-  rewriteTextGpt3,
-} from "./GPT_API.js";
-
 /* global document, Office, Word */
 
 //require("./keyhandling.js");
-require("./GPT_API.js");
+const gptApi = require("./GPT_API.js");
 //require(fetch);
 
 const KEYITEM_NAME = "GPTAPI_Key";
@@ -80,6 +63,7 @@ export async function addTextToSelection() {
     var rangeSelected;
     var selectedText;
     var generatedText, processedText;
+    var chosenFunction;
 
     showApiCallLoadingGif(true);
 
@@ -100,14 +84,17 @@ export async function addTextToSelection() {
       // Add Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          generatedText = await text_completion_Davinci(selectedText, "Automatic");
+          chosenFunction = gptApi.text_completion_Davinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          generatedText = await text_completion_GPT3(selectedText, "Automatic");
+          chosenFunction = gptApi.text_completion_GPT3;
           break;
         default:
+          chosenFunction = gptApi.text_completion_Davinci;
           console.log("No API Model selected");
       }
+
+      generatedText = await chosenFunction(selectedText, "Automatic");
 
       // Process text to fit into the document
       processedText = removeWhiteSpaces(generatedText);
@@ -138,11 +125,9 @@ export async function correctSelection() {
 
     var rangeSelected;
     var correctedText, processedText, selectedText;
+    var chosenFunction;
 
     showApiCallLoadingGif(true);
-
-    await checkGPTKeyExists();
-    await verifyGPTKey();
 
     if (await verifyGPTKey()) {
       // Get Selected Range
@@ -160,14 +145,17 @@ export async function correctSelection() {
       // Correct Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          correctedText = await text_correction_Davinci(selectedText, "Automatic");
+          chosenFunction = gptApi.text_correction_Davinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          correctedText = await text_correction_GPT3(selectedText, "Automatic");
+          chosenFunction = gptApi.text_correction_GPT3;
           break;
         default:
+          chosenFunction = gptApi.text_correction_Davinci;
           console.log("No API Model selected");
       }
+
+      correctedText = await chosenFunction(selectedText, "Automatic");
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -205,6 +193,7 @@ export async function translateSelection() {
 
     var rangeSelected;
     var translatedText, processedText, selectedText;
+    var chosenFunction;
 
     showApiCallLoadingGif(true);
 
@@ -224,27 +213,17 @@ export async function translateSelection() {
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          translatedText = await text_translation(
-            selectedText,
-            "Automatic",
-            document.getElementById("LanguageTo").value
-          );
+          chosenFunction = gptApi.text_translation;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          translatedText = await text_translation(
-            selectedText,
-            "Automatic",
-            document.getElementById("LanguageTo").value
-          );
+          chosenFunction = gptApi.text_translation;
           break;
         default:
-          translatedText = await text_translation(
-            selectedText,
-            "Automatic",
-            document.getElementById("LanguageTo").value
-          );
+          chosenFunction = gptApi.text_translation;
           break;
       }
+
+      translatedText = await chosenFunction(selectedText, "Automatic", document.getElementById("LanguageTo").value);
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -272,6 +251,7 @@ export async function summarizeSelection() {
   Word.run(async (context) => {
     var rangeSelected;
     var summarizedText, processedText, selectedText;
+    var chosenFunction;
 
     showApiCallLoadingGif(true);
 
@@ -291,27 +271,17 @@ export async function summarizeSelection() {
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          summarizedText = await textSummaryDavinci(
-            selectedText,
-            "Automatic",
-            document.getElementById("LanguageTo").value
-          );
+          chosenFunction = gptApi.textSummaryDavinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          summarizedText = await textSummaryGpt3(
-            selectedText,
-            "Automatic",
-            document.getElementById("LanguageTo").value
-          );
+          chosenFunction = gptApi.textSummaryGpt3;
           break;
         default:
-          summarizedText = await textSummaryDavinci(
-            selectedText,
-            "Automatic",
-            document.getElementById("LanguageTo").value
-          );
+          chosenFunction = gptApi.textSummaryDavinci;
           break;
       }
+
+      summarizedText = await chosenFunction(selectedText, "Automatic", document.getElementById("LanguageTo").value);
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -339,6 +309,7 @@ export async function rewriteSelection() {
   Word.run(async (context) => {
     var rangeSelected;
     var rewrittenText, processedText, selectedText;
+    var chosenFunction;
 
     showApiCallLoadingGif(true);
 
@@ -358,27 +329,17 @@ export async function rewriteSelection() {
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          rewrittenText = await rewriteTextDavinci(
-            selectedText,
-            "Automatic",
-            document.getElementById("TextComplexity").value
-          );
+          chosenFunction = gptApi.rewriteTextDavinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          rewrittenText = await rewriteTextGpt3(
-            selectedText,
-            "Automatic",
-            document.getElementById("TextComplexity").value
-          );
+          chosenFunction = gptApi.rewriteTextGpt3;
           break;
         default:
-          rewrittenText = await rewriteTextDavinci(
-            selectedText,
-            "Automatic",
-            document.getElementById("TextComplexity").value
-          );
+          chosenFunction = gptApi.rewriteTextDavinci;
           break;
       }
+
+      rewrittenText = await chosenFunction(selectedText, "Automatic", document.getElementById("TextComplexity").value);
 
       // Delete previous selected text
       rangeSelected.clear();
@@ -496,7 +457,7 @@ export async function answerQuestion() {
   question = document.getElementById("QuestionText").value;
 
   // Answer Question via GPT API
-  answer = await Chatbot(question);
+  answer = await gptApi.Chatbot(question);
 
   document.getElementById("QuestionAnswer").value = answer;
   showApiCallLoadingGif(false);
@@ -530,7 +491,7 @@ export async function addGPTKey() {
 
     newKey = document.getElementById("ApiKey").value;
 
-    valid = await set_key(newKey);
+    valid = await gptApi.set_key(newKey);
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
@@ -586,7 +547,7 @@ export async function verifyGPTKey() {
       //chosen_key = "test";
 
       console.log("read key: " + chosen_key);
-      if (await set_key(chosen_key)) {
+      if (await gptApi.set_key(chosen_key)) {
         console.log("Key is valid");
         keyValid = true;
         document.getElementById("ApiKey").value = chosen_key;
@@ -614,7 +575,7 @@ export async function checkGPTKeyExists() {
     properties.load("key");
     await context.sync();
 
-    for (let i = 0; i < properties.items.length; i++) {
+    for (var i = 0; i < properties.items.length; i++) {
       if (properties.items[i].key === KEYITEM_NAME) {
         keyExists = true;
         break;
@@ -625,5 +586,5 @@ export async function checkGPTKeyExists() {
 }
 
 export async function setErrorMessage(message) {
-  document.getElementById("ErrorMessage").innerHTML = message;
+  document.getElementById("ErrorMessage").innerText = message;
 }
