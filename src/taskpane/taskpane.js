@@ -33,7 +33,6 @@ Office.onReady(async (info) => {
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
-    document.getElementById("BtnApiKeyVerify").onclick = verifyGPTKey;
 
     await verifyGPTKey();
   }
@@ -143,7 +142,7 @@ export async function correctSelection() {
       selectedText = rangeSelected.text;
 
       // Correct Text via GPT API
-      switch(document.getElementById("ApiModel").value) {
+      switch (document.getElementById("ApiModel").value) {
         case "davinci":
           correctedText = await text_correction_Davinci(selectedText, "automatic");
           break;
@@ -156,14 +155,17 @@ export async function correctSelection() {
 
       // Delete previous selected text
       rangeSelected.clear();
+      await context.sync();
 
       // Process text to fit into the document
       processedText = removeWhiteSpaces(correctedText);
 
       // Insert corrected text with foot note
-      rangeSelected.insertText(processedText, Word.InsertLocation.start);
+      rangeSelected.insertText(processedText, Word.InsertLocation.end);
       if (document.getElementById("FootnotesBox").checked)
         rangeSelected.insertFootnote("This text was corrected by the GPT AI");
+
+      await context.sync();
 
       // Insert space at the end of the inserted text
       await insertSpace(rangeSelected);
@@ -204,15 +206,27 @@ export async function translateSelection() {
       selectedText = rangeSelected.text;
 
       // Translate Text via GPT API depending on chosen model
-      switch(document.getElementById("ApiModel").value) {
+      switch (document.getElementById("ApiModel").value) {
         case "davinci":
-          translatedText = await text_translation_GPT3(selectedText, "automatic", document.getElementById("LanguageTo").value);
+          translatedText = await text_translation_GPT3(
+            selectedText,
+            "automatic",
+            document.getElementById("LanguageTo").value
+          );
           break;
         case "gpt-3.5-turbo":
-          translatedText = await text_translation_GPT3(selectedText, "automatic", document.getElementById("LanguageTo").value);
+          translatedText = await text_translation_GPT3(
+            selectedText,
+            "automatic",
+            document.getElementById("LanguageTo").value
+          );
           break;
         default:
-          translatedText = await text_translation_GPT3(selectedText, "automatic", document.getElementById("LanguageTo").value);
+          translatedText = await text_translation_GPT3(
+            selectedText,
+            "automatic",
+            document.getElementById("LanguageTo").value
+          );
           break;
       }
 
