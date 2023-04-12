@@ -56,7 +56,7 @@ function setApiKeyStatus(makeVisible) {
   document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "grid";
 
   // display warning text
-  document.getElementById("ErrorMessage").style.display = makeVisible ? "none" : "inline";
+  document.getElementById("ErrorMessage").innerText = makeVisible ? "" : "No API key! Please enter your API key.";
 }
 
 function setApiKeyStatusLoading() {
@@ -565,6 +565,8 @@ export async function removeGPTKey() {
       console.log("No key to remove");
     }
     await verifyGPTKey();
+    document.getElementById("ApiKey").value = "";
+    setApiKeyStatus(false);
   });
 }
 
