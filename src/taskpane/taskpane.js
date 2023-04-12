@@ -389,7 +389,7 @@ export async function rewriteSelection() {
       // Insert corrected text with foot note
       rangeSelected.insertText(processedText, Word.InsertLocation.end);
       await context.sync();
-      rangeSelected.insertFootnote("This text was summarized by the GPT AI");
+      rangeSelected.insertFootnote("This text was rewritten by the GPT AI");
       await context.sync();
 
       // Insert comment displaying original text
@@ -572,9 +572,7 @@ export async function verifyGPTKey() {
   setApiKeyStatusLoading();
   var keyValid = false;
   await Word.run(async (context) => {
-    var keyExists = await checkGPTKeyExists();
-
-    if (keyExists) {
+    if (await checkGPTKeyExists()) {
       const properties = context.document.properties.customProperties;
 
       var gpt_key = properties.getItem(KEYITEM_NAME);
@@ -592,9 +590,11 @@ export async function verifyGPTKey() {
         document.getElementById("ApiKey").value = chosen_key;
       } else {
         console.log("Key is not valid");
+        setErrorMessage("Key is not valid");
       }
     } else {
       console.log("No key available");
+      setErrorMessage("No key available");
     }
     await context.sync();
   });
@@ -620,4 +620,8 @@ export async function checkGPTKeyExists() {
     }
   });
   return keyExists;
+}
+
+export async function setErrorMessage(message) {
+  document.getElementById("ErrorMessage").innerHTML = message;
 }
