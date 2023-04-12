@@ -41,17 +41,17 @@ Office.onReady(async (info) => {
 
 function setApiKeyStatus(makeVisible) {
   document.getElementById("ApiKeyLoading").style.display = "none";
-  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "inline" : "none";
-  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "inline";
+  document.getElementById("IconApiKeyVerified").style.display = makeVisible ? "grid" : "none";
+  document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "grid";
 
   // display warning text
-  document.getElementById("WarningNoKey").style.display = makeVisible ? "none" : "inline";
+  document.getElementById("ErrorMessage").style.display = makeVisible ? "none" : "inline";
 }
 
 function setApiKeyStatusLoading() {
   document.getElementById("IconApiKeyVerified").style.display = "none";
   document.getElementById("IconApiKeyFalse").style.display = "none";
-  document.getElementById("ApiKeyLoading").style.display = "inline";
+  document.getElementById("ApiKeyLoading").style.display = "grid";
 }
 
 function showApiCallLoadingGif(makeVisible) {
