@@ -113,6 +113,8 @@ export async function addTextToSelection() {
       if (document.getElementById("FootnotesBox").checked)
         rangeSelected.insertFootnote("Parts of that text were added by the GPT AI");
 
+      await context.sync();
+
       // Insert space at the end of the inserted text
       await insertSpace(rangeSelected);
     } else {
@@ -260,78 +262,78 @@ export async function translateSelection() {
   });
 }
 
-export async function generateImageFromSelection() {
-  if (Office.context.requirements.isSetSupported("WordApi", "1.2")) {
-    Word.run(async (context) => {
-      var rangeSelected;
-      var imageURL, selectedText;
+// export async function generateImageFromSelection() {
+//   if (Office.context.requirements.isSetSupported("WordApi", "1.2")) {
+//     Word.run(async (context) => {
+//       var rangeSelected;
+//       var imageURL, selectedText;
 
-      showApiCallLoadingGif(true);
+//       showApiCallLoadingGif(true);
 
-      if (await verifyGPTKey()) {
-        // Get Selected Range
-        rangeSelected = context.document.getSelection();
+//       if (await verifyGPTKey()) {
+//         // Get Selected Range
+//         rangeSelected = context.document.getSelection();
 
-        // Load selected string
-        rangeSelected.load("text");
+//         // Load selected string
+//         rangeSelected.load("text");
 
-        // Wait until everything is synced
-        await context.sync();
+//         // Wait until everything is synced
+//         await context.sync();
 
-        // extract string to variable for further processing
-        selectedText = rangeSelected.text;
+//         // extract string to variable for further processing
+//         selectedText = rangeSelected.text;
 
-        //Generate Image via GPT API depending on chosen model
-        // switch (document.getElementById("ApiModel").value) {
-        //   case GPT_MODEL_DAVINCI:
-        //     imageURL = await image_generation(selectedText);
-        //     break;
-        //   case GPT_MODEL_GPT3_5_TURBO:
-        //     imageURL = await image_generation(selectedText);
-        //     break;
-        //   default:
-        //     imageURL = await image_generation(selectedText);
-        //     break;
-        // }
+//         //Generate Image via GPT API depending on chosen model
+//         // switch (document.getElementById("ApiModel").value) {
+//         //   case GPT_MODEL_DAVINCI:
+//         //     imageURL = await image_generation(selectedText);
+//         //     break;
+//         //   case GPT_MODEL_GPT3_5_TURBO:
+//         //     imageURL = await image_generation(selectedText);
+//         //     break;
+//         //   default:
+//         //     imageURL = await image_generation(selectedText);
+//         //     break;
+//         // }
 
-        // eslint-disable-next-line no-undef
-        var base64Image;
-        //imageURL = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-SjySFVsK7RJxHGjrVtHMwBCI/user-pqXuCE4LoJoByePxOs6VNTx0/img-ewHVIZF3mQCVUqwlLVEOPD2y.png?st=2023-03-31T16%3A58%3A44Z&se=2023-03-31T18%3A58%3A44Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-30T18%3A04%3A48Z&ske=2023-03-31T18%3A04%3A48Z&sks=b&skv=2021-08-06&sig=mPj58eB3XQ0sJ1GbyJlJ5k8kEu52jKtsj91FEXRB4KY%3D";
-        imageURL =
-          "https://images.unsplash.com/photo-1661956600684-97d3a4320e45?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
-        // fetch(imageURL)
-        //   .then(function (response) {
-        //     return response.blob();
-        //   })
-        //   .then(function (blob) {
-        //     return blobToBase64(blob);
-        //   })
-        //   .then(function (base64) {
-        //     base64Image = trimBase64(base64);
-        //     return base64Image;
-        //   });
-        var response = await fetch(imageURL);
-        var blob = await response.blob();
-        base64Image = await blobToBase64(blob);
-        base64Image = trimBase64(base64Image);
+//         // eslint-disable-next-line no-undef
+//         var base64Image;
+//         //imageURL = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-SjySFVsK7RJxHGjrVtHMwBCI/user-pqXuCE4LoJoByePxOs6VNTx0/img-ewHVIZF3mQCVUqwlLVEOPD2y.png?st=2023-03-31T16%3A58%3A44Z&se=2023-03-31T18%3A58%3A44Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-30T18%3A04%3A48Z&ske=2023-03-31T18%3A04%3A48Z&sks=b&skv=2021-08-06&sig=mPj58eB3XQ0sJ1GbyJlJ5k8kEu52jKtsj91FEXRB4KY%3D";
+//         imageURL =
+//           "https://images.unsplash.com/photo-1661956600684-97d3a4320e45?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
+//         // fetch(imageURL)
+//         //   .then(function (response) {
+//         //     return response.blob();
+//         //   })
+//         //   .then(function (blob) {
+//         //     return blobToBase64(blob);
+//         //   })
+//         //   .then(function (base64) {
+//         //     base64Image = trimBase64(base64);
+//         //     return base64Image;
+//         //   });
+//         var response = await fetch(imageURL);
+//         var blob = await response.blob();
+//         base64Image = await blobToBase64(blob);
+//         base64Image = trimBase64(base64Image);
 
-        // Insert Image
-        rangeSelected.insertInlinePictureFromBase64(base64Image, "End");
-        await context.sync();
+//         // Insert Image
+//         rangeSelected.insertInlinePictureFromBase64(base64Image, "End");
+//         await context.sync();
 
-        // Insert Image
-      } else {
-        console.log("Key not verified");
-      }
+//         // Insert Image
+//       } else {
+//         console.log("Key not verified");
+//       }
 
-      showApiCallLoadingGif(false);
-    });
-  } else {
-    //if you reach this code it means that the Word executing this code does not yet support the 1.2 requirement set. in this case you can also insert a paragraph and then insert the document on the paragraph.
+//       showApiCallLoadingGif(false);
+//     });
+//   } else {
+//     //if you reach this code it means that the Word executing this code does not yet support the 1.2 requirement set. in this case you can also insert a paragraph and then insert the document on the paragraph.
 
-    console.log("Error. This functionality requires Word with at least January update!! (check  builds 6568+)");
-  }
-}
+//     console.log("Error. This functionality requires Word with at least January update!! (check  builds 6568+)");
+//   }
+// }
 
 function blobToBase64(blob) {
   return new Promise((resolve, _) => {
