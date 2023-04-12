@@ -97,10 +97,10 @@ export async function addTextToSelection() {
       // Add Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          generatedText = await text_completion_Davinci(selectedText, "automatic");
+          generatedText = await text_completion_Davinci(selectedText, "Automatic");
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          generatedText = await text_completion_GPT3(selectedText, "automatic");
+          generatedText = await text_completion_GPT3(selectedText, "Automatic");
           break;
         default:
           console.log("No API Model selected");
@@ -157,10 +157,10 @@ export async function correctSelection() {
       // Correct Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          correctedText = await text_correction_Davinci(selectedText, "automatic");
+          correctedText = await text_correction_Davinci(selectedText, "Automatic");
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          correctedText = await text_correction_GPT3(selectedText, "automatic");
+          correctedText = await text_correction_GPT3(selectedText, "Automatic");
           break;
         default:
           console.log("No API Model selected");
@@ -221,14 +221,14 @@ export async function translateSelection() {
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          translatedText = await text_translation_GPT3(
+          translatedText = await text_translation(
             selectedText,
             "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          translatedText = await text_translation_GPT3(
+          translatedText = await text_translation(
             selectedText,
             "Automatic",
             document.getElementById("LanguageTo").value
