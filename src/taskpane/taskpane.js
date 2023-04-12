@@ -11,7 +11,8 @@ import {
   text_completion_GPT3,
   text_correction_Davinci,
   text_correction_GPT3,
-  text_translation_GPT3,
+  text_translation,
+  SupportedLanguages,
 } from "./GPT_API.js";
 
 /* global document, Office, Word */
@@ -219,21 +220,21 @@ export async function translateSelection() {
         case GPT_MODEL_DAVINCI:
           translatedText = await text_translation_GPT3(
             selectedText,
-            "automatic",
+            "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
         case GPT_MODEL_GPT3_5_TURBO:
           translatedText = await text_translation_GPT3(
             selectedText,
-            "automatic",
+            "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
         default:
-          translatedText = await text_translation_GPT3(
+          translatedText = await text_translation(
             selectedText,
-            "automatic",
+            "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
