@@ -1,22 +1,60 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-const GPTAPI_Commands_Automatic_Language = {
-  Completion: `Complete this text and keep the original Language: `,
-  Correction: `Correct Spelling and Grammar of the following Text and keep the original Language of the following text, if there are no mistakes return Original text: `,
-  Translation: `Translate the following text to `,
+const SupportedLanguages = {
+  Automatic:`Automatic`,
+  English:`English`,
+  German:`German`,  
+
 };
-const GPTAPI_Commands_English = {
-  Completion: `Complete this text in english: `,
-  Correction: `Correct Spelling and Grammar of the following Text in English, if there are no mistakes return Original text: `,
-  Translation: `Translate the following text from english to `,
+
+const GptApiCommandsSystemRole = {
+  Automatic:`You are a helpful assistant.`,
+  English:`You are a helpful assistant.`,
+  German:`Du bist ein Hilfsbereiter Assistent.`,
+
+}; 
+
+const GptApiCommandsCompletion = {
+  Automatic:`Complete this text and keep the original Language: `,
+  English:`Complete this text in english: ` ,
+  German:`Verfolständige diesen Text in Deutsch: `,
+
 };
-const GPTAPI_Commands_German = {
-  Completion: `Verfolständige diesen Text in Deutsch: `,
-  Correction: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text, falls keine Fehler vorhanden sind, gib den Originaltext zurück: `,
-  Translation: `Überstze den folgenden Text von Deutsch nach `,
+
+const GptApiCommandsCorrection = {
+   Automatic:`Correct Spelling and Grammar of the following Text and keep the original Language of the following text, if there are no mistakes return Original text: `,
+   English:`Correct Spelling and Grammar of the following Text in English, if there are no mistakes return Original text: `,
+   German:`Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text: `,
+
+ };
+
+const GptApiCommandsTranslation = {
+   Automatic:`Translate the following text to `,
+   English:`Translate the following text from english to `,
+   German:`Überstze den folgenden Text von Deutsch nach `,
+
 };
-const GPTAPI_Commands_Role_System_English = "You are a helpful assistant and dont do Notes.";
-const GPTAPI_Commands_Role_System_German = "Du bist ein Hilfsbereiter Assistent und machts keine Kommentare.";
+
+const GptApiCommandsSummary = {
+  Automatic:`Summarize the follwoing text in the original Language, including all important aspects of the text: `,
+  English:`Summarize the follwoing text in english, including all important aspects of the text: `,
+  German:`Fasse den folgenden text in deutsch zusammen: `,
+ };
+
+
+const GptApiCommandsRewriteSimplify = {
+  Automatic:`Rewrite the following and use simpler language and keep the original language:`,
+  English:`Rewrite the following and use simpler language in english:`,
+  German:`Überarbeite den folgenden Text in deutsch mit simplen Ausdrücken, so dass er leicht zu verstehen ist: `,
+
+};
+
+const GptApiCommandsRewriteComplicate = {
+  Automatic:`Please enhance the level of professionalism in your writing and incorporate technical terminology as appropriate in the original language:`,
+  English:`Please enhance the level of professionalism in your writing and incorporate technical terminology as appropriate in English:`,
+  German:`Schreibe den Text professioneller und benutze benutze fachwörter falls angebracht in deutsch:`,
+
+};
 
 
 const configuration = new Configuration({
@@ -63,30 +101,16 @@ export async function set_key(newKey) {
  * @param out{string}                           The text the GPTAI returned.
  */
 export async function text_completion_GPT3(text, language) {
-  switch (language) {
-    case "english":
-      request_template = GPTAPI_Commands_English.Completion;
-      assistant_behavior = GPTAPI_Commands_Role_System_English;
-      break;
-    case "german":
-      request_template = GPTAPI_Commands_German.Completion;
-      assistant_behavior = GPTAPI_Commands_Role_System_German;
-      break;
-    case "automatic":
-      request_template = GPTAPI_Commands_Automatic_Language.Completion;
-      assistant_behavior = GPTAPI_Commands_Role_System_English;
-      break;
-  }
 
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: assistant_behavior },
-      { role: "user", content: request_template + text },
+      { role: "system", content:GptApiCommandsSystemRole[language] },
+      { role: "user", content: GptApiCommandsCorrection[language] + text },
     ],
   });
 
-  console.log("Antwort: " + response.data.choices[0].message.content);
+  console.log("GPTAntwort: " + response.data.choices[0].message.content);
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
@@ -97,27 +121,17 @@ export async function text_completion_GPT3(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_completion_Davinci(text, language) {
-  switch (language) {
-    case "english":
-      request_template = GPTAPI_Commands_English.Completion;
-      break;
-    case "german":
-      request_template = GPTAPI_Commands_German.Completion;
-      break;
-    case "automatic":
-      request_template = GPTAPI_Commands_Automatic_Language.Completion;
-      break;
-  }
+export async function text_completion_Davinci (text, language){
+
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003",
-    prompt: request_template + text,
+    prompt: GptApiCommandsCorrection[language] + text,
     temperature: 0,
     max_tokens: 100,
   });
 
-  console.log("Antwort: " + response.data.choices[0].text);
-  return response.data.choices[0].text;
+  console.log("DavainciAntwort: "+response.data.choices[0].text);
+  return  response.data.choices[0].text;
 }
 
 /**text_correction_GPT3
@@ -128,30 +142,16 @@ export async function text_completion_Davinci(text, language) {
  * @param out{string}                           The text the GPTAI returned.
  */
 export async function text_correction_GPT3(text, language) {
-  switch (language) {
-    case "english":
-      request_template = GPTAPI_Commands_English.Correction;
-      assistant_behavior = GPTAPI_Commands_Role_System_English;
-      break;
-    case "german":
-      request_template = GPTAPI_Commands_German.Correction;
-      assistant_behavior = GPTAPI_Commands_Role_System_German;
-      break;
-    case "automatic":
-      request_template = GPTAPI_Commands_Automatic_Language.Correction;
-      assistant_behavior = GPTAPI_Commands_Role_System_English;
-      break;
-  }
 
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
-      { role: "system", content: assistant_behavior },
-      { role: "user", content: request_template + text },
+      { role: "system", content: GptApiCommandsSystemRole[language]},
+      { role: "user", content: GptApiCommandsCorrection[language] + text},
     ],
   });
 
-  console.log("Antwort: " + response.data.choices[0].message.content);
+  console.log("GPTAntwort: " + response.data.choices[0].message.content);
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
@@ -162,28 +162,17 @@ export async function text_correction_GPT3(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_correction_Davinci(text, language) {
-  switch (language) {
-    case "english":
-      request_template = GPTAPI_Commands_English.Correction;
-      break;
-    case "german":
-      request_template = GPTAPI_Commands_German.Correction;
-      break;
-    case "automatic":
-      request_template = GPTAPI_Commands_Automatic_Language.Correction;
-      break;
-  }
+export async function text_correction_Davinci (text, language){
 
   const response = await currentOPENAIApi.createCompletion({
-    model: "text-davinci-003", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
-    prompt: request_template + text,
+    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    prompt: GptApiCommandsCorrection[language] + text,
     temperature: 0,
     max_tokens: 100,
   });
 
-  console.log("Antwort: " + response.data.choices[0].text);
-  return response.data.choices[0].text;
+  console.log("DavinciAntwort: " + response.data.choices[0].text);
+  return  response;
 }
 
 /**text_translation
@@ -194,31 +183,86 @@ export async function text_correction_Davinci(text, language) {
  * @param in {string}           resultLanguage  Language you want the result text in. All Languages are supported
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_translation_GPT3(text, originallanguage, resultLanguage) {
-  switch (originallanguage) {
-    case "english":
-      request_template = GPTAPI_Commands_English.Translation + resultLanguage + ":";
-      assistant_behavior = GPTAPI_Commands_Role_System_English;
+export async function text_translation(text, language, resultLanguage) {
+
+  const response = await currentOPENAIApi.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: GptApiCommandsSystemRole[language]},
+      { role: "user", content: GptApiCommandsTranslation[language] + resultLanguage + ":" + text },
+    ],
+  });
+  console.log("Antwort: " + response.data.choices[0].message.content);
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+}
+
+export async function textSummaryGpt3(text, language) {
+  const response = await currentOPENAIApi.createChatCompletion({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: GptApiCommandsSystemRole[language]},
+      { role: "user", content: GptApiCommandsSummary[language] + text },
+    ],
+  });
+  console.log(response.data.choices[0].message.content);
+ return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+
+}
+
+export async function textSummaryDavinci (text, language){
+
+  const response = await currentOPENAIApi.createCompletion({
+    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    prompt: GptApiCommandsSummary[language] + text,
+    temperature: 0,
+    max_tokens: 100,
+  });
+
+  console.log(response.data.choices[0].text);
+  return  response;
+}
+
+
+export async function rewriteTextGpt3(text, language, TextStyle) {
+  switch(TextStyle){
+    case "Simple":
+      request_template = GptApiCommandsRewriteSimplify[language];
       break;
-    case "german":
-      request_template = GPTAPI_Commands_German.Translation + resultLanguage + ":";
-      assistant_behavior = GPTAPI_Commands_Role_System_German;
-      break;
-    case "automatic":
-      request_template = GPTAPI_Commands_Automatic_Language.Translation + resultLanguage + ":";
-      assistant_behavior = GPTAPI_Commands_Role_System_English;
+    case "Enhanced":
+      request_template = GptApiCommandsRewriteSimplify[language];
       break;
   }
 
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: assistant_behavior },
+      { role: "system", content: GptApiCommandsSystemRole[language]},
       { role: "user", content: request_template + text },
     ],
   });
-  console.log("Antwort: " + response.data.choices[0].message.content);
-  return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
+  console.log(response.data.choices[0].message.content);
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
+}
+
+export async function rewriteTextDavinci (text, language, TextStyle){
+  switch(TextStyle){
+    case "Simple":
+      request_template = GptApiCommandsRewriteSimplify[language] + text;
+      break;
+    case "Enhanced":
+      request_template = GptApiCommandsRewriteSimplify[language] + text;
+      break;
+  }
+
+  const response = await currentOPENAIApi.createCompletion({
+    model: "text-davinci-003",     //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    prompt: request_template + text,
+    temperature: 0,
+    max_tokens: 100,
+  });
+
+  console.log(response.data.choices[0].text);
+  return  response;
 }
 
 /**key_validation

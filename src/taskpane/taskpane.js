@@ -10,7 +10,8 @@ import {
   text_completion_GPT3,
   text_correction_Davinci,
   text_correction_GPT3,
-  text_translation_GPT3,
+  text_translation,
+  SupportedLanguages,
 } from "./GPT_API.js";
 
 /* global document, Office, Word */
@@ -87,10 +88,10 @@ export async function addTextToSelection() {
       // Add Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case "davinci":
-          generatedText = await text_completion_Davinci(selectedText, "automatic");
+          generatedText = await text_completion_Davinci(selectedText, "Automatic");
           break;
         case "gpt-3.5-turbo":
-          generatedText = await text_completion_GPT3(selectedText, "automatic");
+          generatedText = await text_completion_GPT3(selectedText, "Automatic");
           break;
         default:
           console.log("No API Model selected");
@@ -145,10 +146,10 @@ export async function correctSelection() {
       // Correct Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case "davinci":
-          correctedText = await text_correction_Davinci(selectedText, "automatic");
+          correctedText = await text_correction_Davinci(selectedText, "Automatic");
           break;
         case "gpt-3.5-turbo":
-          correctedText = await text_correction_GPT3(selectedText, "automatic");
+          correctedText = await text_correction_GPT3(selectedText, "Automatic");
           break;
         default:
           console.log("No API Model selected");
@@ -209,23 +210,23 @@ export async function translateSelection() {
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
         case "davinci":
-          translatedText = await text_translation_GPT3(
+          translatedText = await text_translation(
             selectedText,
-            "automatic",
+            "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
         case "gpt-3.5-turbo":
-          translatedText = await text_translation_GPT3(
+          translatedText = await text_translation(
             selectedText,
-            "automatic",
+            "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
         default:
-          translatedText = await text_translation_GPT3(
+          translatedText = await text_translation(
             selectedText,
-            "automatic",
+            "Automatic",
             document.getElementById("LanguageTo").value
           );
           break;
