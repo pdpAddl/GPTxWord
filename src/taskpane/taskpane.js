@@ -35,7 +35,6 @@ Office.onReady(async (info) => {
     document.getElementById("BtnTranslate").onclick = translateSelection;
 
     document.getElementById("btnQuestion").onclick = answerQuestion;
-    document.getElementById("btnQuestion").onclick = generateImageFromSelection;
 
     document.getElementById("BtnApiKeyReset").onclick = removeGPTKey;
     document.getElementById("BtnApiKeyConfirm").onclick = addGPTKey;
@@ -299,7 +298,7 @@ export async function generateImageFromSelection() {
         var base64Image;
         //imageURL = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-SjySFVsK7RJxHGjrVtHMwBCI/user-pqXuCE4LoJoByePxOs6VNTx0/img-ewHVIZF3mQCVUqwlLVEOPD2y.png?st=2023-03-31T16%3A58%3A44Z&se=2023-03-31T18%3A58%3A44Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2023-03-30T18%3A04%3A48Z&ske=2023-03-31T18%3A04%3A48Z&sks=b&skv=2021-08-06&sig=mPj58eB3XQ0sJ1GbyJlJ5k8kEu52jKtsj91FEXRB4KY%3D";
         imageURL =
-         "https://images.unsplash.com/photo-1661956600684-97d3a4320e45?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
+          "https://images.unsplash.com/photo-1661956600684-97d3a4320e45?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80";
         // fetch(imageURL)
         //   .then(function (response) {
         //     return response.blob();
@@ -418,15 +417,14 @@ export async function removeGPTKey() {
 
       await context.sync();
       console.log(context.document.properties.customProperties.items);
-      setApiKeyStatus(false);
     } else {
       console.log("No key to remove");
     }
+    await verifyGPTKey();
   });
 }
 
 export async function verifyGPTKey() {
-  return true;
   setApiKeyStatusLoading();
   var keyValid = false;
   await Word.run(async (context) => {
@@ -454,9 +452,9 @@ export async function verifyGPTKey() {
     } else {
       console.log("No key available");
     }
-    setApiKeyStatus(keyValid);
     await context.sync();
   });
+  setApiKeyStatus(keyValid);
   return keyValid;
 }
 
