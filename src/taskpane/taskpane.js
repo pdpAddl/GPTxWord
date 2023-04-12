@@ -322,10 +322,11 @@ export async function removeGPTKey() {
 
       await context.sync();
       console.log(context.document.properties.customProperties.items);
-      setApiKeyStatus(false);
     } else {
       console.log("No key to remove");
     }
+    document.getElementById("ApiKey").value = "";
+    setApiKeyStatus(false);
   });
 }
 
