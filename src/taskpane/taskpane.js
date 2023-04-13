@@ -213,7 +213,7 @@ export async function translateSelection() {
       await embedText(
         rangeSelected,
         translatedText,
-        "This text was translated by the GPT AI",
+        "This text was translated by the GPT API",
         "Original text:\n" + selectedText
       );
     } else {
@@ -271,7 +271,7 @@ export async function summarizeSelection() {
       await embedText(
         rangeSelected,
         summarizedText,
-        "This text was summarized by the GPT AI",
+        "This text was summarized by the GPT API",
         "Original text:\n" + selectedText
       );
     } else {
@@ -325,7 +325,7 @@ export async function rewriteSelection() {
       rangeSelected.clear();
 
       // Embed text into the document
-      await embedText(rangeSelected, rewrittenText, "Original text:\n" + selectedText);
+      await embedText(rangeSelected, rewrittenText, "Text was rewritten by the GPT API", "Original text:\n" + selectedText);
     } else {
       console.log("Key not verified");
     }
