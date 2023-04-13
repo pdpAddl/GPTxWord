@@ -114,7 +114,7 @@ export async function text_completion_GPT3(text, language) {
 export async function text_completion_Davinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003",
-    prompt: GptApiCommandsCorrection[language] + text,
+    prompt: GptApiCommandsCompletion[language] + text,
     temperature: 0,
     max_tokens: 100,
   });
