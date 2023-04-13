@@ -504,6 +504,7 @@ export async function addGPTKey() {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
       setApiKeyStatus(true);
+      setErrorMessage("");
       console.log("Key applied");
     } else {
       // Error message, wrong key
