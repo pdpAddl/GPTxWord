@@ -442,13 +442,16 @@ function removeWhiteSpaces(text) {
 
 async function insertSpace(range) {
   return Word.run(async (context) => {
-    var rangeSpace = range.insertText(" ", Word.InsertLocation.end);
+
+    var rangeSpace = range.getRange("end");
+    rangeSpace.insertText(" ", Word.InsertLocation.end);
     await context.sync();
 
-    rangeSpace.load("font");
-    await context.sync();
+    //rangeSpace.load("font");
+    //await context.sync();
 
-    rangeSpace.font.superscript = false;
+    //rangeSpace.font.superscript = false;
+    return rangeSpace;
   });
 }
 
@@ -462,7 +465,12 @@ async function embedText(range, text, footnote = "", comment = "") {
     insertedTextRange = range.insertText(processedText, Word.InsertLocation.end);
     await context.sync();
     range.expandTo(insertedTextRange);
+    range.select();
     await context.sync();
+
+    var rangeSpace = await insertSpace(range);
+    await context.sync();
+
 
     if (comment != "") {
       // Insert comment displaying original text
