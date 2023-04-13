@@ -62,7 +62,7 @@ export async function addTextToSelection() {
 
     var rangeSelected;
     var selectedText;
-    var generatedText, processedText;
+    var generatedText;
     var chosenFunction;
 
     showApiCallLoadingGif(true);
@@ -111,7 +111,7 @@ export async function correctSelection() {
      */
 
     var rangeSelected;
-    var correctedText, processedText, selectedText;
+    var correctedText, selectedText;
     var chosenFunction;
 
     showApiCallLoadingGif(true);
@@ -222,7 +222,7 @@ export async function translateSelection() {
 export async function summarizeSelection() {
   Word.run(async (context) => {
     var rangeSelected;
-    var summarizedText, processedText, selectedText;
+    var summarizedText, selectedText;
     var chosenFunction;
 
     showApiCallLoadingGif(true);
@@ -257,11 +257,12 @@ export async function summarizeSelection() {
 
       // Delete previous selected text
       rangeSelected.clear();
+      await context.sync();
 
       // Process text to fit into the document
       await embedText(
         rangeSelected,
-        processedText,
+        summarizedText,
         "This text was summarized by the GPT AI",
         "Original text:\n" + selectedText
       );
@@ -430,6 +431,7 @@ function removeWhiteSpaces(text) {
 async function insertSpace(range) {
   return Word.run(async (context) => {
     var rangeSpace = range.insertText(" ", Word.InsertLocation.end);
+    await context.sync();
 
     rangeSpace.load("font");
     await context.sync();
@@ -439,12 +441,15 @@ async function insertSpace(range) {
 }
 
 async function embedText(range, text, footnote = "", comment = "") {
+  var insertedTextRange;
   return Word.run(async (context) => {
     // Process text to fit into the document
     var processedText = removeWhiteSpaces(text);
 
-    // Insert corrected text with foot note
-    range.insertText(processedText, Word.InsertLocation.end);
+    // Insert text
+    insertedTextRange = range.insertText(processedText, Word.InsertLocation.end);
+    await context.sync();
+    range.expandTo(insertedTextRange);
     await context.sync();
 
     if (comment != "") {
