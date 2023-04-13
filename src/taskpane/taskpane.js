@@ -39,7 +39,7 @@ function setApiKeyStatus(makeVisible) {
   document.getElementById("IconApiKeyFalse").style.display = makeVisible ? "none" : "grid";
 
   // display warning text
-  document.getElementById("ErrorMessage").innerText = makeVisible ? "" : "No API key! Please enter your API key.";
+  //document.getElementById("ErrorMessage").innerText = makeVisible ? "" : "No API key! Please enter your API key.";
 }
 
 function setApiKeyStatusLoading() {
@@ -508,11 +508,11 @@ export async function addGPTKey() {
     } else {
       // Error message, wrong key
       console.log("Key denied");
+      setErrorMessage("Key is not valid.");
       setApiKeyStatus(false);
     }
 
     await context.sync();
-    console.log(context.document.properties.customProperties.items);
   });
 }
 
@@ -559,6 +559,7 @@ export async function verifyGPTKey() {
         console.log("Key is valid");
         keyValid = true;
         document.getElementById("ApiKey").value = chosen_key;
+        setErrorMessage("");
       } else {
         console.log("Key is not valid");
         setErrorMessage("Key is not valid");

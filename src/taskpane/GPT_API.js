@@ -96,7 +96,7 @@ export async function text_completion_GPT3(text, language) {
     model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: GptApiCommandsCorrection[language] + text },
+      { role: "user", content: GptApiCommandsCompletion[language] + text },
     ],
   });
 
@@ -208,10 +208,13 @@ export async function textSummaryDavinci(text, language) {
 
 export async function rewriteTextGpt3(text, language, TextStyle) {
   switch (TextStyle) {
-    case "Simple":
+    case "Simplify":
       request_template = GptApiCommandsRewriteSimplify[language];
       break;
-    case "Enhanced":
+    case "Professionalize":
+      request_template = GptApiCommandsRewriteComplicate[language];
+      break;
+    default:
       request_template = GptApiCommandsRewriteSimplify[language];
       break;
   }
@@ -229,10 +232,13 @@ export async function rewriteTextGpt3(text, language, TextStyle) {
 
 export async function rewriteTextDavinci(text, language, TextStyle) {
   switch (TextStyle) {
-    case "Simple":
+    case "Simplify":
       request_template = GptApiCommandsRewriteSimplify[language] + text;
       break;
-    case "Enhanced":
+    case "Professionalize":
+      request_template = GptApiCommandsRewriteComplicate[language] + text;
+      break;
+    default:
       request_template = GptApiCommandsRewriteSimplify[language] + text;
       break;
   }
