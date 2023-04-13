@@ -474,7 +474,7 @@ async function embedText(range, text, footnote = "", comment = "") {
 
     if (comment != "") {
       // Insert comment displaying original text
-      range.insertComment("Original text:\n" + comment);
+      range.insertComment(comment);
       await context.sync();
     }
     if (footnote != "" && document.getElementById("FootnotesBox").checked) {
