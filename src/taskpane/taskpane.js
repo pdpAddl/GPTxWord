@@ -342,7 +342,7 @@ export async function rewriteSelection() {
 export async function executeCustomTask() {
   Word.run(async (context) => {
     var rangeSelected;
-    var customTaskText, selectedText;
+    var customTaskText, selectedText, requestText;
     var chosenFunction;
 
     showApiCallLoadingGif(true);
@@ -383,9 +383,14 @@ export async function executeCustomTask() {
       //     break;
       // }
 
-      // customTaskText = await chosenFunction(customPrompt, selectedText);
+      requestText = customPrompt.trim();
+      requestText += requestText.slice(-1) == ":" ? "" : ":";
+      requestText += " " + selectedText;
 
-      customTaskText = "TEST";
+      customTaskText = await gptApi.Chatbot(requestText);
+
+      // Insert a newline into the document
+      rangeSelected.insertText("\n", "End");
 
       await embedText(
         rangeSelected,
