@@ -53,8 +53,6 @@ const configuration = new Configuration({
 });
 var currentOPENAIApi = new OpenAIApi(configuration);
 
-var request_template, assistant_behavior;
-
 //set_key(key);
 
 /**set_key
@@ -63,7 +61,7 @@ var request_template, assistant_behavior;
  * @param in {string}           newKey          Key you want to validate
  * @param out{bool}                             True if Key is Valid, False if key is Invalid
  */
-export async function set_key(newKey) {
+export async function setKey(newKey) {
   var OldOpenAIApi = currentOPENAIApi;
   var NewConfiguration = new Configuration({
     apiKey: newKey,
@@ -71,7 +69,7 @@ export async function set_key(newKey) {
 
   const NewOpenAIApi = new OpenAIApi(NewConfiguration);
 
-  if (await key_validation(NewOpenAIApi)) {
+  if (await validateKey(NewOpenAIApi)) {
     console.log("Key correct");
     currentOPENAIApi = NewOpenAIApi;
     return true;
@@ -91,12 +89,12 @@ export async function set_key(newKey) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_completion_GPT3(text, language) {
+export async function textCompletionGpt3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: GptApiCommandsCompletion[language] + text },
+      { role: "user", content: GptApiCommandsCorrection[language] + text },
     ],
   });
 
@@ -111,10 +109,10 @@ export async function text_completion_GPT3(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_completion_Davinci(text, language) {
+export async function textCompletionDavinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003",
-    prompt: GptApiCommandsCompletion[language] + text,
+    prompt: GptApiCommandsCorrection[language] + text,
     temperature: 0,
     max_tokens: 100,
   });
@@ -130,7 +128,7 @@ export async function text_completion_Davinci(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_correction_GPT3(text, language) {
+export async function textCorrectionGpt3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     messages: [
@@ -150,7 +148,7 @@ export async function text_correction_GPT3(text, language) {
  * @param in {string}           language        Language in wich you want the GPTAI to answer. Currently supporting "english","german" and "automatic"
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_correction_Davinci(text, language) {
+export async function textCorrectionDavinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
     prompt: GptApiCommandsCorrection[language] + text,
@@ -159,7 +157,7 @@ export async function text_correction_Davinci(text, language) {
   });
 
   console.log("DavinciAntwort: " + response.data.choices[0].text);
-  return response.data.choices[0].text;
+  return response;
 }
 
 /**text_translation
@@ -170,7 +168,7 @@ export async function text_correction_Davinci(text, language) {
  * @param in {string}           resultLanguage  Language you want the result text in. All Languages are supported
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function text_translation(text, language, resultLanguage) {
+export async function textTranslationGpt3(text, language, resultLanguage) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -179,7 +177,7 @@ export async function text_translation(text, language, resultLanguage) {
     ],
   });
   console.log("Antwort: " + response.data.choices[0].message.content);
-  return response.data.choices[0].message.content;
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 export async function textSummaryGpt3(text, language) {
@@ -191,7 +189,7 @@ export async function textSummaryGpt3(text, language) {
     ],
   });
   console.log(response.data.choices[0].message.content);
-  return response.data.choices[0].message.content;
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 export async function textSummaryDavinci(text, language) {
@@ -203,19 +201,16 @@ export async function textSummaryDavinci(text, language) {
   });
 
   console.log(response.data.choices[0].text);
-  return response.data.choices[0].text;
+  return response;
 }
 
 export async function rewriteTextGpt3(text, language, TextStyle) {
   switch (TextStyle) {
-    case "Simplify":
-      request_template = GptApiCommandsRewriteSimplify[language];
+    case "Simple":
+      requestTemplate = GptApiCommandsRewriteSimplify[language];
       break;
-    case "Professionalize":
-      request_template = GptApiCommandsRewriteComplicate[language];
-      break;
-    default:
-      request_template = GptApiCommandsRewriteSimplify[language];
+    case "Enhanced":
+      requestTemplate = GptApiCommandsRewriteSimplify[language];
       break;
   }
 
@@ -223,35 +218,32 @@ export async function rewriteTextGpt3(text, language, TextStyle) {
     model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: request_template + text },
+      { role: "user", content: requestTemplate + text },
     ],
   });
   console.log(response.data.choices[0].message.content);
-  return response.data.choices[0].message.content;
+  return response; //für den Text des Ergebnisses: response.data.choices[0].message.content
 }
 
 export async function rewriteTextDavinci(text, language, TextStyle) {
   switch (TextStyle) {
-    case "Simplify":
-      request_template = GptApiCommandsRewriteSimplify[language] + text;
+    case "Simple":
+      requestTemplate = GptApiCommandsRewriteSimplify[language] + text;
       break;
-    case "Professionalize":
-      request_template = GptApiCommandsRewriteComplicate[language] + text;
-      break;
-    default:
-      request_template = GptApiCommandsRewriteSimplify[language] + text;
+    case "Enhanced":
+      requestTemplate = GptApiCommandsRewriteSimplify[language] + text;
       break;
   }
 
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
-    prompt: request_template + text,
+    prompt: requestTemplate + text,
     temperature: 0,
     max_tokens: 100,
   });
 
   console.log(response.data.choices[0].text);
-  return response.data.choices[0].text;
+  return response;
 }
 
 /**key_validation
@@ -260,7 +252,7 @@ export async function rewriteTextDavinci(text, language, TextStyle) {
  * @param in {string}           API             API you want to validate
  * @param out{bool}                             True if Key is Valid, False if key is Invalid
  */
-export async function key_validation(API) {
+export async function validateKey(API) {
   try {
     await API.createCompletion({
       model: "ada",
@@ -282,7 +274,7 @@ export async function key_validation(API) {
  * @param in {string}           request         API you want to validate
  * @param out{string}                           The text the GPTAI returned.
  */
-export async function Chatbot(request) {
+export async function chatbot(request) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
@@ -300,12 +292,12 @@ export async function Chatbot(request) {
  * @param in {string}           description     Description of the Picture you want
  * @param out{string}                           Image URL
  */
-export async function image_generation(description) {
+export async function imageGeneration(description) {
   const response = await currentOPENAIApi.createImage({
     prompt: description,
     n: 1,
     size: "1024x1024",
   });
-  var image_url = await response.data.data[0].url;
-  console.log(image_url);
+  var imageUrl = await response.data.data[0].url;
+  console.log(imageUrl);
 }
