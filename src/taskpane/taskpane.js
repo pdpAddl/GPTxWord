@@ -20,9 +20,9 @@ Office.onReady(async (info) => {
 
     document.getElementById("BtnAddText").onclick = addTextToSelection;
     document.getElementById("BtnCorrectText").onclick = correctSelection;
-    document.getElementById("BtnTranslate").onclick = translateSelection;
+    document.getElementById("BtnTranslateText").onclick = translateSelection;
     document.getElementById("BtnSummarizeText").onclick = summarizeSelection;
-    document.getElementById("BtnComplexityText").onclick = rewriteSelection;
+    document.getElementById("BtnRewriteText").onclick = rewriteSelection;
 
     document.getElementById("btnQuestion").onclick = answerQuestion;
 
@@ -429,7 +429,7 @@ export async function answerQuestion() {
   // Answer Question via GPT API
   answer = await gptApi.Chatbot(question);
 
-  document.getElementById("QuestionAnswer").value = answer;
+  document.getElementById("AnswerText").value = answer;
   showApiCallLoadingGif(false);
 }
 
