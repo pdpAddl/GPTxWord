@@ -260,11 +260,11 @@ export async function validateKey(API) {
   }
 }
 
-/**Chatbot
- * Description.     A function to use the OpenAIAPI as Chatbot
- *                  (If given same text multiple times it returns different answers)
- * @param in {string}           request         API you want to validate
- * @param out{string}                           The text the GPTAI returned.
+/**
+ * A function to use the OpenAIAPI as Chatbot
+ * (If given same text multiple times it returns different answers)
+ * @param {string} request API you want to validate
+ * @returns {string} The text the GPTAI returned.
  */
 export async function answerUserRequest(request) {
   const response = await currentOPENAIApi.createChatCompletion({
