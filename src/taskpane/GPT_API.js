@@ -129,7 +129,7 @@ export async function textCompletionDavinci(text, language) {
  */
 export async function textCorrectionGpt3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
-    model: "gpt-3.5-turbo", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: GPT_API_COMMANDS_SYSTEM_ROLE[language] },
       { role: "user", content: GPT_API_COMMANDS_CORRECTION[language] + text },
@@ -148,10 +148,8 @@ export async function textCorrectionGpt3(text, language) {
  */
 export async function textCorrectionDavinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
-    model: "text-davinci-003", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
+    model: "text-davinci-003",
     prompt: GPT_API_COMMANDS_CORRECTION[language] + text,
-    temperature: 0,
-    max_tokens: 100,
   });
 
   return response.data.choices[0].text;

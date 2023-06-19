@@ -21,11 +21,10 @@
    gap: 8px;
  }
 
- .header { grid-area: header; border: 1px solid #ccc; }
- .main { grid-area: main; border: 1px solid #ccc; }
+ .header { grid-area: header; }
+ .main { grid-area: main; }
  .footer { 
    grid-area: footer; 
-   border: 1px solid #ccc; 
    font-size: larger;
 }
 
@@ -103,8 +102,6 @@
  .tabcontent {
     display: none;
     padding: 6px 12px;
-    border: 1px solid #ccc;
-    /* border-top: none; */
     animation: fadeEffect 0.5s;
  }
 
