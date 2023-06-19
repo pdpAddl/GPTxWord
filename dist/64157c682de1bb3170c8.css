@@ -1,0 +1,237 @@
+/* 
+ * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * See LICENSE in the project root for license information.
+ */
+
+ :root {
+   --sizeLoading: 40px;
+}
+
+/* Layouts */
+ .layout {
+   width: 100%;
+   height: 97%;
+
+   display: grid;
+   grid:
+      "header" auto
+      "main" 1fr
+      "footer" auto
+      / 1fr;
+   gap: 8px;
+ }
+
+ .header { grid-area: header; border: 1px solid #ccc; }
+ .main { grid-area: main; border: 1px solid #ccc; }
+ .footer { 
+   grid-area: footer; 
+   border: 1px solid #ccc; 
+   font-size: larger;
+}
+
+.footerLayout {
+   display: grid;
+   grid-template-columns: auto var(--sizeLoading);
+   gap: 8px;
+}
+
+.mainPageLayout {
+  display: grid;
+  grid-template-rows: repeat(auto-fit, 1fr);
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+}
+
+.configPageLayout3x2 {
+  display: grid;
+  grid-template-rows: repeat(2, 2.5em);
+  grid-template-columns: 1fr minmax( 0, 1fr ) minmax( 0, 1fr );
+  gap: 8px;
+}
+
+.configPageLayout2x3 {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: 1fr 2fr;
+  gap: 8px;
+}
+
+.bothColumns {
+  grid-column: 1 / 3;
+}
+
+/* defaults */
+ html,
+ body {
+     width: 100%;
+     height: 100%;
+     margin: 0;
+     padding: 0;
+     /* background-color: #2f2f2f; */
+ }
+ 
+ ul {
+     margin: 0;
+     padding: 0;
+ }
+ 
+ /* TABS */
+ .tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+ }
+
+ .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: auto;
+    transition: 0.3s;
+ }
+
+ .tab button:hover {
+    background-color: #ddd;
+ }
+
+ .tab button.active {
+    background-color: #ccc;
+ }
+
+ .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    /* border-top: none; */
+    animation: fadeEffect 0.5s;
+ }
+
+ @keyframes fadeEffect {
+   from {opacity: 0;}
+   to{opacity: 1;}
+ }
+
+ /* BUTTONS */
+ .btn {
+  font-family: "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: white;
+  background-color: #0078d4;
+  border: 1px solid #0078d4;
+  border-radius: 2px;
+  padding: 6.25px 15px;
+  transition: all 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+  outline: none;
+ }
+ .btn:hover {
+  background-color: #005ba1;
+ }
+ .btn:active {
+  background-color: #0894ff;
+ }
+ /* .btn:disabled {
+
+ } */
+ .btn:focus {
+   outline: 1px transparent;
+ }
+
+ .errorMessage {
+   color: red;
+ }
+
+ .LoadingGif {
+   width: var(--sizeLoading);
+   height: var(--sizeLoading);
+ }
+
+ textarea {
+   resize: none;
+ }
+
+ /* FLUENT-UI */
+ .checkbox-456 {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  border: 1px solid rgb(0, 120, 212);
+  border-radius: 2px;
+  box-sizing: border-box;
+  transition-property: background, border, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.23, 1);
+  overflow: hidden;
+  margin-right: 4px;
+  background: rgb(0, 120, 212);
+}
+
+
+/* Microsoft */
+ .ms-welcome__header {
+    padding: 20px;
+    padding-bottom: 30px;
+    padding-top: 100px;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    align-items: center;
+ }
+
+ .ms-welcome__main {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-flex: 1 0 0;
+    flex: 1 0 0;
+    padding: 10px 20px;
+ }
+ 
+ .ms-welcome__main > h2 {
+     width: 100%;
+     text-align: center;
+ }
+ 
+ .ms-welcome__features {
+     list-style-type: none;
+     margin-top: 20px;
+ }
+ 
+ .ms-welcome__features.ms-List .ms-ListItem {
+     padding-bottom: 20px;
+     display: -webkit-flex;
+     display: flex;
+ }
+ 
+ .ms-welcome__features.ms-List .ms-ListItem > .ms-Icon {
+     margin-right: 10px;
+ }
+ 
+ .ms-welcome__action.ms-Button--hero {
+     margin-top: 30px;
+ }
+ 
+.ms-Button.ms-Button--hero .ms-Button-label {
+  color: #0078d7;
+}
+
+.ms-Button.ms-Button--hero:hover .ms-Button-label,
+.ms-Button.ms-Button--hero:focus .ms-Button-label{
+  color: #005a9e;
+  cursor: pointer;
+}
+
+b {
+    font-weight: bold;
+}
