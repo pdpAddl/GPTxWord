@@ -7,6 +7,10 @@
    --sizeLoading: 40px;
 }
 
+body {
+  background-color: white;
+}
+
 /* Layouts */
  .layout {
    width: 100%;
