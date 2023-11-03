@@ -85,13 +85,13 @@ export async function addTextToSelection() {
       // Add Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          chosenFunction = gptApi.text_completion_Davinci;
+          chosenFunction = gptApi.textCompletionDavinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          chosenFunction = gptApi.text_completion_GPT3;
+          chosenFunction = gptApi.textCompletionGpt3;
           break;
         default:
-          chosenFunction = gptApi.text_completion_Davinci;
+          chosenFunction = gptApi.textCompletionDavinci;
           console.log("No API Model selected");
       }
 
@@ -133,13 +133,13 @@ export async function correctSelection() {
       // Correct Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          chosenFunction = gptApi.text_correction_Davinci;
+          chosenFunction = gptApi.textCorrectionDavinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          chosenFunction = gptApi.text_correction_GPT3;
+          chosenFunction = gptApi.textCorrectionGpt3;
           break;
         default:
-          chosenFunction = gptApi.text_correction_Davinci;
+          chosenFunction = gptApi.textCorrectionDavinci;
           console.log("No API Model selected");
       }
 
@@ -190,13 +190,13 @@ export async function translateSelection() {
       // Translate Text via GPT API depending on chosen model
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          chosenFunction = gptApi.text_translation;
+          chosenFunction = gptApi.textTranslation;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          chosenFunction = gptApi.text_translation;
+          chosenFunction = gptApi.textTranslation;
           break;
         default:
-          chosenFunction = gptApi.text_translation;
+          chosenFunction = gptApi.textTranslation;
           break;
       }
 
@@ -569,7 +569,7 @@ export async function addGPTKey() {
 
     newKey = document.getElementById("ApiKey").value;
 
-    valid = await gptApi.set_key(newKey);
+    valid = await gptApi.setKey(newKey);
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
@@ -626,7 +626,7 @@ export async function verifyGPTKey() {
       //chosen_key = "test";
 
       console.log("read key: " + chosen_key);
-      if (await gptApi.set_key(chosen_key)) {
+      if (await gptApi.setKey(chosen_key)) {
         console.log("Key is valid");
         keyValid = true;
         document.getElementById("ApiKey").value = chosen_key;
