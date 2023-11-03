@@ -1,42 +1,42 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-const GptApiCommandsSystemRole = {
+const GPT_API_COMMANDS_SYSTEM_ROLE = {
   Automatic: `You are a helpful assistant.`,
   English: `You are a helpful assistant.`,
   German: `Du bist ein hilfsbereiter Assistent.`,
 };
 
-const GptApiCommandsCompletion = {
+const GPT_API_COMMANDS_COMPLETION = {
   Automatic: `Complete this text and keep the original Language: `,
   English: `Complete this text in english: `,
   German: `Vervollständige diesen Text auf Deutsch: `,
 };
 
-const GptApiCommandsCorrection = {
+const GPT_API_COMMANDS_CORRECTION = {
   Automatic: `Correct spelling and grammar of the following text and keep the original language of the text, if there are no mistakes return the original text: `,
   English: `Correct spelling and grammar of the following text in English, if there are no mistakes return the original text: `,
   German: `Verbessere Rechtschreibung und Grammatik auf deutsch in dem folgenden Text, gibt es keine Fehler, gib den Originaltext zurück: `,
 };
 
-const GptApiCommandsTranslation = {
+const GPT_API_COMMANDS_TRANSLATION = {
   Automatic: `Translate the following text to `,
   English: `Translate the following text from english to `,
   German: `Übersetze den folgenden Text von Deutsch auf `,
 };
 
-const GptApiCommandsSummary = {
+const GPT_API_COMMANDS_SUMMARY = {
   Automatic: `Summarize the follwoing text in the original language, including all important aspects of the text: `,
   English: `Summarize the follwoing text in english, including all important aspects of the text: `,
   German: `Fasse den folgenden Text in deutsch zusammen, übernehme alle wichtigen Aspekte des Textes: `,
 };
 
-const GptApiCommandsRewriteSimplify = {
+const GPT_API_COMMANDS_REWRITE_SIMPLIFY = {
   Automatic: `Rewrite the following text and use simpler language and keep the original language:`,
   English: `Rewrite the following text in english and use simpler language:`,
   German: `Überarbeite den folgenden Text in deutsch mit simplen Ausdrücken, so dass er leichter zu verstehen ist: `,
 };
 
-const GptApiCommandsRewriteComplicate = {
+const GPT_API_COMMANDS_REWRITE_COMPLICATE = {
   Automatic: `Enhance the level of professionalism in your writing and incorporate technical terminology as appropriate in the original language:`,
   English: `Enhance the level of professionalism in your writing and incorporate technical terminology as appropriate in english:`,
   German: `Schreibe den Text professioneller und benutze Fachwörter falls angebracht, auf deutsch:`,
@@ -81,8 +81,8 @@ export async function textCompletionGpt3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: GptApiCommandsCompletion[language] + text },
+      { role: "system", content: GPT_API_COMMANDS_SYSTEM_ROLE[language] },
+      { role: "user", content: GPT_API_COMMANDS_COMPLETION [language] + text },
     ],
   });
   return response.data.choices[0].message.content; //für den Text des Ergebnisses: response.data.choices[0].message.content
@@ -97,7 +97,7 @@ export async function textCompletionGpt3(text, language) {
 export async function textCompletionDavinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003",
-    prompt: GptApiCommandsCompletion[language] + text,
+    prompt: GPT_API_COMMANDS_COMPLETION [language] + text,
     temperature: 0.6,
     max_tokens: 1000,
   });
@@ -114,8 +114,8 @@ export async function textCorrectionGpt3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: GptApiCommandsCorrection[language] + text },
+      { role: "system", content: GPT_API_COMMANDS_SYSTEM_ROLE[language] },
+      { role: "user", content: GPT_API_COMMANDS_CORRECTION [language] + text },
     ],
   });
   return response.data.choices[0].message.content;
@@ -130,7 +130,7 @@ export async function textCorrectionGpt3(text, language) {
 export async function textCorrectionDavinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003", 
-    prompt: GptApiCommandsCorrection[language] + text,
+    prompt: GPT_API_COMMANDS_CORRECTION [language] + text,
     temperature: 0,
     max_tokens: 1000,
   });
@@ -148,8 +148,8 @@ export async function textTranslation(text, language, resultLanguage) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: GptApiCommandsTranslation[language] + resultLanguage + ":" + text },
+      { role: "system", content: GPT_API_COMMANDS_SYSTEM_ROLE[language] },
+      { role: "user", content: GPT_API_COMMANDS_TRANSLATION [language] + resultLanguage + ":" + text },
     ],
   });
   return response.data.choices[0].message.content;
@@ -165,8 +165,8 @@ export async function textSummaryGpt3(text, language) {
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: GptApiCommandsSystemRole[language] },
-      { role: "user", content: GptApiCommandsSummary[language] + text },
+      { role: "system", content: GPT_API_COMMANDS_SYSTEM_ROLE[language] },
+      { role: "user", content: GPT_API_COMMANDS_SUMMARY [language] + text },
     ],
   });
   return response.data.choices[0].message.content;
@@ -181,7 +181,7 @@ export async function textSummaryGpt3(text, language) {
 export async function textSummaryDavinci(text, language) {
   const response = await currentOPENAIApi.createCompletion({
     model: "text-davinci-003", //es existieren verschieden Modelle des GPT davinci003 max request 4000 tokens, beste Qualität
-    prompt: GptApiCommandsSummary[language] + text,
+    prompt: GPT_API_COMMANDS_SUMMARY [language] + text,
     temperature: 0.3,
     max_tokens: 1000,
   });
@@ -198,20 +198,20 @@ export async function textSummaryDavinci(text, language) {
 export async function rewriteTextGpt3(text, language, textStyle) {
   switch (textStyle) {
     case "Simplify":
-      request_template = GptApiCommandsRewriteSimplify[language];
+      request_template = GPT_API_COMMANDS_REWRITE_SIMPLIFY[language];
       break;
     case "Professionalize":
-      request_template = GptApiCommandsRewriteComplicate[language];
+      request_template = GPT_API_COMMANDS_REWRITE_COMPLICATE[language];
       break;
     default:
-      request_template = GptApiCommandsRewriteSimplify[language];
+      request_template = GPT_API_COMMANDS_REWRITE_SIMPLIFY[language];
       break;
   }
 
   const response = await currentOPENAIApi.createChatCompletion({
     model: "gpt-3.5-turbo",
     messages: [
-      { role: "system", content: GptApiCommandsSystemRole[language] },
+      { role: "system", content: GPT_API_COMMANDS_SYSTEM_ROLE[language] },
       { role: "user", content: request_template + text },
     ],
   });
@@ -228,13 +228,13 @@ export async function rewriteTextGpt3(text, language, textStyle) {
 export async function rewriteTextDavinci(text, language, TextStyle) {
   switch (TextStyle) {
     case "Simplify":
-      request_template = GptApiCommandsRewriteSimplify[language] + text;
+      request_template = GPT_API_COMMANDS_REWRITE_SIMPLIFY[language] + text;
       break;
     case "Professionalize":
-      request_template = GptApiCommandsRewriteComplicate[language] + text;
+      request_template = GPT_API_COMMANDS_REWRITE_COMPLICATE[language] + text;
       break;
     default:
-      request_template = GptApiCommandsRewriteSimplify[language] + text;
+      request_template = GPT_API_COMMANDS_REWRITE_SIMPLIFY[language] + text;
       break;
   }
 
