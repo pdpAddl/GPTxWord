@@ -77,13 +77,13 @@ export async function addTextToSelection() {
       // Choose correct API function depending on selected model
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          chosenFunction = gptApi.text_completion_Davinci;
+          chosenFunction = gptApi.textCompletionDavinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          chosenFunction = gptApi.text_completion_GPT3;
+          chosenFunction = gptApi.textCompletionGpt3;
           break;
         default:
-          chosenFunction = gptApi.text_completion_Davinci;
+          chosenFunction = gptApi.textCompletionDavinci;
       }
 
       // Generate text
@@ -118,13 +118,13 @@ export async function correctSelection() {
       // Correct Text via GPT API
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          chosenFunction = gptApi.text_correction_Davinci;
+          chosenFunction = gptApi.textCorrectionDavinci;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          chosenFunction = gptApi.text_correction_GPT3;
+          chosenFunction = gptApi.textCorrectionGpt3;
           break;
         default:
-          chosenFunction = gptApi.text_correction_Davinci;
+          chosenFunction = gptApi.textCorrectionDavinci;
       }
 
       correctedText = await chosenFunction(selectedText, document.getElementById("ApiLanguage").value);
@@ -166,13 +166,13 @@ export async function translateSelection() {
 
       switch (document.getElementById("ApiModel").value) {
         case GPT_MODEL_DAVINCI:
-          chosenFunction = gptApi.text_translation;
+          chosenFunction = gptApi.textTranslation;
           break;
         case GPT_MODEL_GPT3_5_TURBO:
-          chosenFunction = gptApi.text_translation;
+          chosenFunction = gptApi.textTranslation;
           break;
         default:
-          chosenFunction = gptApi.text_translation;
+          chosenFunction = gptApi.textTranslation;
           break;
       }
 
@@ -441,7 +441,7 @@ async function embedText(range, text, footnote = "", comment = "") {
 
 // ------------------KEY--------------------------
 /**
- * Add the GPT API key to the document and check if it is valid. 
+ * Add the GPT API key to the document and check if it is valid.
  * If it is valid, the key will be applied and stored in the document.
  * @returns true if the key is valid, false if not
  */
@@ -454,7 +454,7 @@ export async function addGPTKey() {
 
     newKey = document.getElementById("ApiKey").value;
 
-    valid = await gptApi.set_key(newKey);
+    valid = await gptApi.setKey(newKey);
     if (valid) {
       // Key is correct and was applied
       context.document.properties.customProperties.add(KEYITEM_NAME, newKey);
@@ -510,7 +510,7 @@ export async function verifyGPTKey() {
 
       var chosen_key = gpt_key.value;
 
-      if (await gptApi.set_key(chosen_key)) {
+      if (await gptApi.setKey(chosen_key)) {
         keyValid = true;
         document.getElementById("ApiKey").value = chosen_key;
         setErrorMessage("");
